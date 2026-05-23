@@ -30,6 +30,19 @@ tool_agnostic: true
 authors: []
 # Optional. Add if skill originates from a third party or has multiple contributors.
 # Example: [greptileai] or [your-name]
+
+tested_on: []
+# Optional but recommended. List models this skill has been verified on.
+# Format: ['model-name (YYYY-MM-DD)']
+# Example: ['claude-sonnet-4.6 (2026-05-23)', 'gpt-4o (2026-05-20)']
+
+# deprecated_since: "1.2.0"
+# Optional. Set if this skill is no longer recommended. Triggers a validator warning.
+# Must be a semver version string.
+
+# superseded_by: other-skill-name
+# Optional. Set alongside deprecated_since to point users to the replacement.
+# Must be a valid kebab-case skill name.
 ---
 
 # Skill Title

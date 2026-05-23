@@ -8,6 +8,7 @@ skill files. Each skill encodes judgment, not just instructions.
 
 [![CI](https://github.com/jeckyl2010/skills/actions/workflows/ci.yml/badge.svg)](https://github.com/jeckyl2010/skills/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jeckyl2010/skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/jeckyl2010/skills/actions/workflows/codeql.yml)
+[![Discussions](https://img.shields.io/github/discussions/jeckyl2010/skills)](https://github.com/jeckyl2010/skills/discussions)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jeckyl2010/skills/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jeckyl2010/skills)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/jeckyl2010/skills)](https://github.com/jeckyl2010/skills/commits/main)

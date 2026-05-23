@@ -17,6 +17,9 @@ version: "1.0.0"              # quoted SemVer
 tags: [tag1, tag2]            # array
 tool_agnostic: true
 authors: [Anders Hybertz]
+tested_on: []                 # optional: ['claude-sonnet-4.6 (YYYY-MM-DD)']
+# deprecated_since: "x.y.z"  # optional: set when deprecating; triggers validator warning
+# superseded_by: skill-name  # optional: set alongside deprecated_since
 ---
 ```
 
@@ -24,6 +27,7 @@ Rules:
 - `triggers` is not a valid field — never use it
 - Hub-sourced or third-party skills (missing `authors: [Anders Hybertz]`) are not ours to modify
 - Description must be under 150 characters — validate before committing
+- When deprecating a skill: set `deprecated_since` + `superseded_by`, update CHANGELOG, do not delete until superseding skill is stable
 
 ---
 
@@ -32,8 +36,8 @@ Rules:
 ### Adding or updating a skill
 
 1. Ensure frontmatter passes the rules above
-2. Bump `version` in frontmatter — patch for fixes, minor for new content, major for rewrites
-3. Update `CHANGELOG.md` — add the change under `[Unreleased]`
+2. Bump `version` in frontmatter — patch for wording/clarity fixes, minor for new content or behaviour, major for breaking output format or interface changes
+3. Update `CHANGELOG.md` — add the change under `[Unreleased]`, then promote `[Unreleased]` to a versioned entry matching the new version
 4. Run: `python3 ~/Repos/hermes-config/sync-skills.py push "<message>"` — this rebuilds `index.yaml`, validates, commits, and pushes in one step. Do not run `git push` manually for skill changes.
 
 ### Deleting a skill

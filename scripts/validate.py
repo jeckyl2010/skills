@@ -59,6 +59,8 @@ def main():
         sys.exit(0)
 
     errors = []
+    warnings = []
+
     for skill_path in skills:
         rel = skill_path.relative_to(ROOT)
         data, parse_error = extract_frontmatter(skill_path)
@@ -75,7 +77,22 @@ def main():
             if name_error:
                 errors.append(f"  {rel}: {name_error}")
 
+        # Deprecation warnings — not errors, but visible
+        if data and "deprecated_since" in data:
+            superseded = data.get("superseded_by")
+            msg = f"  {rel}: deprecated since {data['deprecated_since']}"
+            if superseded:
+                msg += f" — superseded by '{superseded}'"
+            warnings.append(msg)
+
     total = len(skills)
+
+    if warnings:
+        print(f"Deprecation warnings — {len(warnings)} deprecated skill(s):\n")
+        for w in warnings:
+            print(w)
+        print()
+
     if errors:
         print(f"Validation failed — {len(errors)} error(s) across {total} skill(s):\n")
         for e in errors:

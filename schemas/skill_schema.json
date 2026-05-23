@@ -34,6 +34,21 @@
       "type": "array",
       "items": { "type": "string" },
       "description": "Optional list of authors"
+    },
+    "tested_on": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Models this skill has been verified on, e.g. ['claude-sonnet-4.6 (2026-05-23)']"
+    },
+    "deprecated_since": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "Version from which this skill is deprecated. Triggers a validator warning."
+    },
+    "superseded_by": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Name of the skill that replaces this one (kebab-case)"
     }
   }
 }

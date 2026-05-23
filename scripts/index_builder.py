@@ -54,8 +54,11 @@ def main():
             "version": data.get("version", ""),
             "tags": data.get("tags", []),
             "tool_agnostic": data.get("tool_agnostic", None),
+            "tested_on": data.get("tested_on", None),
+            "deprecated_since": data.get("deprecated_since", None),
+            "superseded_by": data.get("superseded_by", None),
         }
-        # Clean up None values
+        # Clean up None/empty values
         entry = {k: v for k, v in entry.items() if v is not None and v != []}
         index["skills"].append(entry)
 

@@ -29,6 +29,34 @@ jobs:
       - name: Run skill validator
         run: python3 scripts/validate.py
 
+  index-fresh:
+    name: Index staleness check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Regenerate index and check for diff
+        run: |
+          python3 scripts/index_builder.py
+          if ! git diff --exit-code index.yaml; then
+            echo ""
+            echo "index.yaml is out of date. Run python3 scripts/index_builder.py locally and commit the result."
+            exit 1
+          fi
+
   gitleaks:
     name: Secret scan
     runs-on: ubuntu-latest
