@@ -1,7 +1,7 @@
 ---
 name: extract-pdf-text-on-macos-with-pypdf
 description: Extract text from a local PDF on macOS when native Spotlight metadata is insufficient, using python3 and pypdf.
-version: "1.0"
+version: "1.0.1"
 tags: [pdf, text-extraction, macos, python, pypdf]
 tool_agnostic: true
 authors: [Anders Hybertz]

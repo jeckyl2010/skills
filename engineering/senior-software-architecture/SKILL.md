@@ -1,7 +1,7 @@
 ---
 name: senior-software-architecture
 description: Apply senior architectural judgment to systems, boundaries, scalability, reliability, and technical decision-making.
-version: "1.0"
+version: "1.0.1"
 tags: [architecture, system-design, scalability, reliability, trade-offs]
 tool_agnostic: true
 authors: [Anders Hybertz]

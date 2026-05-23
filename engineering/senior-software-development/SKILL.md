@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.0"
+version: "1.0.1"
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability, bun, test-scaffold, deduplication, derived-stats, nextjs, client-server-boundary, vscode, framer-motion, animation-cleanup, turbopack-cache, dev-server, watch-alerts]
 tool_agnostic: true
 authors: [Anders Hybertz]

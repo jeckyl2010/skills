@@ -1,7 +1,7 @@
 ---
 name: codebase-review-and-design-assessment
 description: Review an unfamiliar codebase and produce a grounded design assessment with explicit judgment and pragmatic recommendations.
-version: "1.0"
+version: "1.0.1"
 tags: [code-review, architecture, assessment, design, maintainability]
 tool_agnostic: true
 authors: [Anders Hybertz]

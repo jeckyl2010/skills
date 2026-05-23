@@ -1,7 +1,7 @@
 ---
 name: static-site-seo-and-og
 description: Add SEO meta tags, Open Graph, Twitter Card, canonical URLs, sitemap, and a generated OG image to a static site.
-version: "1.0"
+version: "1.0.1"
 tags: [seo, open-graph, sitemap, astro, static-site, social-sharing]
 tool_agnostic: true
 authors: [Anders Hybertz]

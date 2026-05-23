@@ -1,7 +1,7 @@
 ---
 name: github-repo-professionalise
 description: Bring a GitHub repo to professional standard — CI, security tooling, community health files, badges, Dependabot, CodeQL, and Scorecard.
-version: "1.3.0"
+version: "1.4.0"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -175,7 +175,7 @@ pre-commit run --all-files   # verify clean before first commit
 | `.github/ISSUE_TEMPLATE/bug_report.md` | ✅ | Environment, steps, output block |
 | `.github/ISSUE_TEMPLATE/feature_request.md` | ✅ | Problem / solution / alternatives |
 | `.github/PULL_REQUEST_TEMPLATE.md` | ✅ | Checklist anchored to actual project standards |
-| `AGENTS.md` | ✅ | Repo-specific conventions for AI agents — injected automatically by Hermes when working in this repo. Encode: skill format rules, change workflow, CHANGELOG discipline, commit convention. |
+| `AGENTS.md` | ✅ | Repo-specific conventions for AI agents — injected automatically by Hermes when working in this repo. Encode: skill frontmatter rules (including `tested_on`, `deprecated_since`, `superseded_by`), version bump guidance (patch/minor/major), CHANGELOG discipline, sync-skills.py workflow, deletion checklist, commit convention. |
 | `CODE_OF_CONDUCT.md` | ❌ | Skip for single-maintainer projects — performative overhead |
 | `SUPPORT.md` | ❌ | Skip unless there is a community to support |
 

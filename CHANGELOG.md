@@ -10,6 +10,13 @@ Format: `## [version] — dd.MM.yyyy`
 
 ---
 
+## [1.2.1] — 23.05.2026
+
+### Fixed
+- Version format corrected from `"1.0"` to `"1.0.1"` (quoted SemVer) across 7 owned skills: `senior-ui-ux`, `astro-static-sites`, `codebase-review-and-design-assessment`, `senior-software-architecture`, `senior-software-development`, `static-site-seo-and-og`, `extract-pdf-text-on-macos-with-pypdf`
+
+---
+
 ## [1.2.0] — 23.05.2026
 
 ### Added

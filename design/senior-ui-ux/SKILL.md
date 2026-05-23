@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.0"
+version: "1.0.1"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
