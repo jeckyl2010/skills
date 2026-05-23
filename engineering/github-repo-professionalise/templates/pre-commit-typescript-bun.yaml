@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.27.2
+    hooks:
+      - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: biome
+        name: biome
+        # After updating biome: run `bunx biome migrate --write` to fix schema version
+        entry: bunx biome check --write .
+        language: system
+        pass_filenames: false
+
+      - id: typecheck
+        name: typecheck
+        entry: bash -c "cd web && bun run typecheck"
+        language: system
+        pass_filenames: false
+
+      - id: knip
+        name: knip
+        entry: bash -c "cd web && bunx knip"
+        language: system
+        pass_filenames: false

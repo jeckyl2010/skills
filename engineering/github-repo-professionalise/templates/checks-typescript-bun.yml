@@ -1,0 +1,73 @@
+name: Checks
+
+on:
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+
+permissions: {}
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        working-directory: web   # adjust if package.json is at repo root
+
+      - name: Type check
+        run: bun run typecheck
+        working-directory: web
+
+      - name: Lint (Biome)
+        run: bun run lint
+        working-directory: web
+
+      - name: Dead code (knip)
+        run: bunx knip
+        working-directory: web
+
+      - name: Tests
+        run: bun run test
+        working-directory: web
+
+      - name: Test coverage
+        run: bun test tests/ --coverage --coverage-reporter=lcov
+        working-directory: web
+
+      - name: Dependency audit (osv-scanner)
+        # NOTE: google/osv-scanner-action has no floating @v2 tag and is a reusable
+        # workflow (not a composite action). Use the CLI directly.
+        if: always()
+        run: |
+          curl -fsSL https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64             -o /usr/local/bin/osv-scanner
+          chmod +x /usr/local/bin/osv-scanner
+          osv-scanner --lockfile=web/bun.lock || true
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: web/coverage/lcov.info   # requires --coverage-reporter=lcov above
+          fail_ci_if_error: false
