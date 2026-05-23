@@ -398,6 +398,66 @@ Order: CI status, CodeQL, codecov, Scorecard, License, stack/language, tooling, 
 
 ---
 
+### 3j. README.md — structure and docs/ strategy
+
+The README should be navigable in 60 seconds, not a complete manual.
+Aim for under 150 lines. Everything verbose lives in `docs/`.
+
+**Required structure (in order):**
+
+```
+1. Title + one-line tagline
+2. Badges (see 3h)
+3. 2–3 sentence description
+   - What it is
+   - What problem it solves
+   - What it is NOT (if there is a common misconception)
+4. Quick start — minimal path to running, nothing else
+5. Docs table — links into docs/
+6. Architecture — brief summary, diagram if one exists
+7. Development — commands only, no prose
+```
+
+**docs/ folder — what goes there:**
+
+| File | Content |
+|------|---------|
+| `docs/setup.md` | Full install, manual setup steps, prerequisites detail |
+| `docs/commands.md` | Full CLI/API reference, all flags and options |
+| `docs/features.md` | Capability matrix, known limitations |
+| `docs/architecture.md` | Deep-dive on components, data flow, design decisions |
+| `docs/deployment.md` | Container setup, infrastructure, environment config |
+| `docs/development.md` | Test strategy, coverage expectations, model/schema changes |
+
+Not every project needs all of these — create the ones that have real content.
+Stub files are noise. If it fits in three lines, it stays in the README.
+
+**The docs table in README:**
+
+```markdown
+## Documentation
+
+| | |
+|---|---|
+| [docs/setup.md](docs/setup.md) | Full install and manual setup |
+| [docs/commands.md](docs/commands.md) | CLI reference |
+| [docs/architecture.md](docs/architecture.md) | Component overview and data flow |
+```
+
+**Assessment checklist for an existing README:**
+
+- Is there a description that says what it is AND what it is not?
+- Is the quick start actually minimal, or does it have manual-setup detail inline?
+- Is there a deployment/infrastructure section that should be in docs/?
+- Is there an architecture section longer than ~10 lines? Move the detail.
+- Are there numbered manual steps inline that belong in docs/setup.md?
+- Does CONTRIBUTING.md duplicate dev-setup content from the README? Pick one.
+
+**Refactor approach:** move content out of README into docs/ files, replace with
+a one-line summary + link. Commit README and docs/ changes together.
+
+---
+
 ## Phase 4 — Verify
 
 ```bash
