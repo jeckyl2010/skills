@@ -5,6 +5,7 @@ version: "1.0"
 tags: [pdf, text-extraction, macos, python, pypdf]
 tool_agnostic: true
 authors: [Anders Hybertz]
+tested_on: []
 ---
 
 # Extract PDF text on macOS with pypdf

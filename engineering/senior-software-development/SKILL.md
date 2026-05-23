@@ -5,6 +5,7 @@ version: "1.0"
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability, bun, test-scaffold, deduplication, derived-stats, nextjs, client-server-boundary, vscode, framer-motion, animation-cleanup, turbopack-cache, dev-server, watch-alerts]
 tool_agnostic: true
 authors: [Anders Hybertz]
+tested_on: []
 ---
 
 # Senior Software Development

@@ -5,6 +5,7 @@ version: "1.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
+tested_on: []
 ---
 
 # Astro static sites

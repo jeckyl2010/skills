@@ -5,6 +5,7 @@ version: "1.3.0"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
 authors: [Anders Hybertz]
+tested_on: []
 ---
 
 # GitHub Repo Professionalisation

@@ -5,6 +5,7 @@ version: "1.0"
 tags: [seo, open-graph, sitemap, astro, static-site, social-sharing]
 tool_agnostic: true
 authors: [Anders Hybertz]
+tested_on: []
 ---
 
 # Static site SEO and Open Graph setup
