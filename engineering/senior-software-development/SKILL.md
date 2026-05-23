@@ -290,6 +290,29 @@ Biome: run `bunx biome migrate --write` after any Biome version bump to update t
 
 See `references/typescript-ci-toolchain.md` for full workflow YAML, pre-commit config, knip.json template, GitHub post-setup checklist, repo metadata setup (`gh repo edit`), license fetch, and standard README badge block.
 
+## Codecov lcov fix (Bun)
+Bun's default coverage output is text-only (terminal table). To upload to Codecov,
+generate lcov explicitly and pass the file path to the action:
+
+CI step:
+```bash
+bun test tests/ --coverage --coverage-reporter=lcov
+# produces: web/coverage/lcov.info  (relative to working-directory)
+```
+
+codecov-action config:
+```yaml
+- uses: codecov/codecov-action@v6
+  with:
+    token: ${{ secrets.CODECOV_TOKEN }}
+    files: web/coverage/lcov.info    # ← relative to repo root
+    fail_ci_if_error: false
+```
+
+Codecov also requires the repo to be activated on codecov.io after the first
+successful upload — the CODECOV_TOKEN alone does not register the repo. Visit
+codecov.io/gh/OWNER/REPO and activate it.
+
 ## Pitfalls to avoid
 - Jumping to implementation before understanding the problem
 - Proposing a new pattern when an existing one already fits

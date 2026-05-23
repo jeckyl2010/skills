@@ -141,6 +141,17 @@ skills:
   - java
   - dotnet
   tool_agnostic: true
+- name: github-repo-professionalise
+  category: engineering
+  path: engineering/github-repo-professionalise
+  description: 'Analyse a GitHub repo and bring it up to a professional, maintainable
+    standard: CI quality gates, security tooling, community health files, badges,
+    Dependabot, OSSF Scorecard, CodeQL, coverage reporting. Covers TypeScript/Bun
+    and Python/uv stacks. Based on jeckyl2010/risk-assistant (TypeScript) and jeckyl2010/mkdocs2confluence
+    (Python).
+
+    '
+  version: ''
 - name: graphify
   category: engineering
   path: engineering/graphify

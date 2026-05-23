@@ -103,9 +103,15 @@ Steps in order:
 6. `bun run lint` (Biome)
 7. `bunx knip` — dead code
 8. `bun run test`
-9. `bun run test:coverage`
+9. `bun test tests/ --coverage --coverage-reporter=lcov` (output: `coverage/lcov.info`)
 10. osv-scanner — dep audit, `if: always()` (see osv-scanner note below)
-11. `codecov/codecov-action@v4` — coverage upload, `fail_ci_if_error: false`
+11. `codecov/codecov-action@v6` — coverage upload, `files: web/coverage/lcov.info`, `fail_ci_if_error: false`
+
+**Coverage upload pitfall:** pass `files: web/coverage/lcov.info` explicitly to the
+codecov action. Without it the action searches the repo root and may upload nothing.
+Bun generates lcov only with `--coverage-reporter=lcov` — default output is text-only.
+The `coverage/` dir is created at `working-directory` level, so the path in the action
+must be relative to the repo root (e.g. `web/coverage/lcov.info`).
 
 ### codeql.yml
 ```yaml
@@ -279,21 +285,29 @@ shows it in the About panel.
 
 ## README badges
 
-Standard badge block for a TypeScript project with this CI toolchain:
+Full badge block for a TypeScript project with this CI toolchain:
 
 ```markdown
 [![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/OWNER/REPO/actions/workflows/codeql.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/codeql.yml)
+[![codecov](https://codecov.io/gh/OWNER/REPO/graph/badge.svg)](https://codecov.io/gh/OWNER/REPO)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/OWNER/REPO/badge)](https://securityscorecards.dev/viewer/?uri=github.com/OWNER/REPO)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Bun](https://img.shields.io/badge/runtime-Bun-fbf0df?logo=bun&logoColor=black)](https://bun.sh)
+[![code style: Biome](https://img.shields.io/badge/code%20style-Biome-60a5fa.svg)](https://biomejs.dev)
+[![Last commit](https://img.shields.io/github/last-commit/OWNER/REPO)](https://github.com/OWNER/REPO/commits/main)
 ```
 
 Notes:
 - Scorecard badge resolves from `api.securityscorecards.dev` — shows "unknown"
   for a few hours after the first successful scorecard.yml run, then resolves.
-- Add `[![codecov](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg)](https://codecov.io/gh/OWNER/REPO)`
-  if CODECOV_TOKEN is configured.
-- Badge order convention: CI status first, security/quality second, license last.
+- Codecov badge URL uses `/graph/badge.svg` (not `/branch/main/graph/badge.svg`).
+  The repo must be activated on codecov.io after first upload — token alone
+  does not auto-register it. Visit codecov.io/gh/OWNER/REPO to activate.
+- Badge order convention: CI → CodeQL → coverage → security → license → stack signals → freshness.
+- Static stack badges (TypeScript, Bun, Biome) have no live data; use the exact
+  color/logo values above for visual consistency.
 
 ---
 
