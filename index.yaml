@@ -1,0 +1,98 @@
+generated: '2026-05-23'
+skills:
+- name: senior-ui-ux
+  category: design
+  path: design/senior-ui-ux
+  description: Apply senior UI/UX judgment to interfaces, user flows, interaction
+    details, and product usability decisions.
+  version: '1.0'
+  tags:
+  - ux
+  - ui
+  - accessibility
+  - wcag
+  - usability
+  - copywriting
+  - consultancy-sites
+  tool_agnostic: true
+- name: astro-static-sites
+  category: engineering
+  path: engineering/astro-static-sites
+  description: Build, review, and extend Astro static sites — config, integrations,
+    SEO, deployment to GitHub Pages.
+  version: '1.0'
+  tags:
+  - astro
+  - static-site
+  - github-pages
+  - seo
+  - deployment
+  - css
+  tool_agnostic: true
+- name: codebase-review-and-design-assessment
+  category: engineering
+  path: engineering/codebase-review-and-design-assessment
+  description: Review an unfamiliar codebase and produce a grounded design assessment
+    with explicit judgment and pragmatic recommendations.
+  version: '1.0'
+  tags:
+  - code-review
+  - architecture
+  - assessment
+  - design
+  - maintainability
+  tool_agnostic: true
+- name: senior-software-architecture
+  category: engineering
+  path: engineering/senior-software-architecture
+  description: Apply senior architectural judgment to systems, boundaries, scalability,
+    reliability, and technical decision-making.
+  version: '1.0'
+  tags:
+  - architecture
+  - system-design
+  - scalability
+  - reliability
+  - trade-offs
+  tool_agnostic: true
+- name: senior-software-development
+  category: engineering
+  path: engineering/senior-software-development
+  description: Apply senior-level engineering judgment to code review, implementation,
+    debugging, refactoring, and delivery planning.
+  version: '1.0'
+  tags:
+  - code-review
+  - refactoring
+  - debugging
+  - testing
+  - implementation
+  - maintainability
+  tool_agnostic: true
+- name: static-site-seo-and-og
+  category: engineering
+  path: engineering/static-site-seo-and-og
+  description: Add SEO meta tags, Open Graph, Twitter Card, canonical URLs, sitemap,
+    and a generated OG image to a static site.
+  version: '1.0'
+  tags:
+  - seo
+  - open-graph
+  - sitemap
+  - astro
+  - static-site
+  - social-sharing
+  tool_agnostic: true
+- name: extract-pdf-text-on-macos-with-pypdf
+  category: tooling
+  path: tooling/extract-pdf-text-on-macos-with-pypdf
+  description: Extract text from a local PDF on macOS when native Spotlight metadata
+    is insufficient, using python3 and pypdf.
+  version: '1.0'
+  tags:
+  - pdf
+  - text-extraction
+  - macos
+  - python
+  - pypdf
+  tool_agnostic: true

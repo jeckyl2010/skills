@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill frontmatter",
+  "description": "YAML frontmatter schema for SKILL.md files",
+  "type": "object",
+  "required": ["name", "description", "version"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Kebab-case skill name, must match directory name"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 150,
+      "description": "One-line description of what the skill does"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "Semver version string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional tags for discovery and filtering"
+    },
+    "tool_agnostic": {
+      "type": "boolean",
+      "description": "True if the skill body contains no tool-specific syntax or provider references"
+    },
+    "authors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional list of authors"
+    }
+  }
+}
