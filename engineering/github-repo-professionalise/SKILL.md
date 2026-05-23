@@ -19,13 +19,38 @@ Template files are in `templates/` — load with `skill_view(file_path=...)`.
 
 ## Phase 1 — Gather information (ask before touching anything)
 
-1. **License** — GPL v3, MIT, Apache 2.0, or other?
-2. **Maintainer GitHub handle** — for CODEOWNERS and advisory links
-3. **Codecov** — do they want coverage reporting? Is `CODECOV_TOKEN` already set?
-4. **Stack** — auto-detect from files, but confirm: Python/uv, TypeScript/Bun, TypeScript/npm, other?
-5. **Package registry** — PyPI, npm, or not published? Affects README badges.
-6. **Timezone** — for Dependabot schedule (default: Europe/Copenhagen)
-7. **Pre-commit** — installed locally? (`pre-commit --version`)
+Ask ONE question at a time. Wait for the answer before asking the next.
+Where options exist, present them as a numbered or lettered list (single or multiple choice as appropriate).
+
+Questions in order:
+
+1. **License** (single choice)
+   a) MIT
+   b) GPL v3
+   c) Apache 2.0
+   d) Other (ask them to specify)
+
+2. **Maintainer GitHub handle** (open) — for CODEOWNERS and advisory links
+
+3. **Stack** (single choice — auto-detect from files first, then confirm)
+   a) Python / uv
+   b) TypeScript / Bun
+   c) TypeScript / npm
+   d) Other (ask them to specify)
+
+4. **Package registry** (single choice) — affects README badges
+   a) PyPI
+   b) npm
+   c) Not published
+
+5. **Codecov** (single choice) — coverage reporting
+   a) Yes — `CODECOV_TOKEN` already set in repo secrets
+   b) Yes — token not yet set (will need to configure)
+   c) No
+
+6. **Timezone** (open, default: Europe/Copenhagen) — for Dependabot schedule
+
+7. **Pre-commit installed locally?** — run `pre-commit --version` to check, or ask the user
 
 ---
 
