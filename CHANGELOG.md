@@ -6,6 +6,14 @@ Format: `## [version] — dd.MM.yyyy`
 
 ---
 
+## [Unreleased]
+
+### Changed
+- `github-repo-professionalise`: shortened description to pass 150 char schema limit
+- `github-repo-professionalise`: Phase 1 questions now asked one at a time with multiple/single choice options where applicable
+
+---
+
 ## [1.0.0] — 23.05.2026
 
 Initial release.
