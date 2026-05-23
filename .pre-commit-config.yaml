@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.27.2
+    hooks:
+      - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: validate-skills
+        name: Validate skills
+        entry: python3 scripts/validate.py
+        language: system
+        pass_filenames: false

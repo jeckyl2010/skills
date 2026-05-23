@@ -6,6 +6,12 @@ COM<tech> (comtechconsulting.dk), software architecture consultant, Copenhagen.
 Three decades of industry experience distilled into composable, tool-agnostic
 skill files. Each skill encodes judgment, not just instructions.
 
+[![CI](https://github.com/jeckyl2010/skills/actions/workflows/ci.yml/badge.svg)](https://github.com/jeckyl2010/skills/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/jeckyl2010/skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/jeckyl2010/skills/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jeckyl2010/skills/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jeckyl2010/skills)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/jeckyl2010/skills)](https://github.com/jeckyl2010/skills/commits/main)
+
 ## What is a skill
 
 A skill is a focused, reusable prompt unit — one clear purpose, portable across
@@ -46,9 +52,10 @@ Only the directories that are actually needed are present — no empty scaffoldi
 ---
 name: skill-name              # required, kebab-case
 description: one-liner        # required
-version: "1.0"                # required
+version: "1.0.0"              # required, quoted SemVer
 tags: [tag1, tag2]            # optional, for discovery
 tool_agnostic: true           # optional, signals broad portability
+authors: [Anders Hybertz]     # required
 ---
 ```
 
@@ -83,4 +90,4 @@ python3 scripts/index_builder.py  # regenerate index.yaml
 
 ## License
 
-MIT. Use freely, attribute if you share.
+GPL v3 — see [LICENSE](LICENSE).

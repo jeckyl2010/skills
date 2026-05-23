@@ -1,0 +1,47 @@
+name: Checks
+
+on:
+  workflow_call:
+    secrets: {}
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validate skills
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install jsonschema pyyaml
+
+      - name: Run skill validator
+        run: python3 scripts/validate.py
+
+  gitleaks:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

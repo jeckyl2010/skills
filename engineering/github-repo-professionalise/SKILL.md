@@ -1,6 +1,6 @@
 ---
 name: github-repo-professionalise
-description: Analyse a GitHub repo and bring it up to a professional, maintainable standard — CI quality gates, security tooling, community health files, badges, Dependabot, OSSF Scorecard, CodeQL, coverage reporting. Covers TypeScript/Bun and Python/uv stacks.
+description: Bring a GitHub repo to professional standard — CI, security tooling, community health files, badges, Dependabot, CodeQL, and Scorecard.
 version: "1.0.0"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
