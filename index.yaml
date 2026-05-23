@@ -29,6 +29,33 @@ skills:
   - deployment
   - css
   tool_agnostic: true
+- name: check-pr
+  category: engineering
+  path: engineering/check-pr
+  description: Check a GitHub, GitLab, or Perforce PR/MR/CL for unresolved review
+    comments, failing checks, and description gaps.
+  version: 1.2.0
+  tags:
+  - git
+  - github
+  - gitlab
+  - perforce
+  - code-review
+  - pr
+  - ci
+  tool_agnostic: true
+- name: code-reviewer-strict
+  category: engineering
+  path: engineering/code-reviewer-strict
+  description: Strict code and test review against coding principles, minimality,
+    and project specs. Reports KEEP/DISCARD/ESCALATE with quality score.
+  version: 1.0.0
+  tags:
+  - code-review
+  - quality
+  - testing
+  - minimality
+  tool_agnostic: true
 - name: codebase-review-and-design-assessment
   category: engineering
   path: engineering/codebase-review-and-design-assessment
@@ -41,6 +68,34 @@ skills:
   - assessment
   - design
   - maintainability
+  tool_agnostic: true
+- name: graphify
+  category: engineering
+  path: engineering/graphify
+  description: Turn any folder of files into a knowledge graph with community detection,
+    interactive HTML, GraphRAG-ready JSON, and an audit report.
+  version: 1.0.0
+  tags:
+  - knowledge-graph
+  - visualization
+  - rag
+  - code-analysis
+  - documentation
+  tool_agnostic: true
+- name: greploop
+  category: engineering
+  path: engineering/greploop
+  description: Iteratively improve a PR/MR/CL until Greptile gives 5/5 confidence
+    with zero unresolved comments. Max 5 iterations.
+  version: 1.2.0
+  tags:
+  - git
+  - github
+  - gitlab
+  - perforce
+  - greptile
+  - code-review
+  - automation
   tool_agnostic: true
 - name: senior-software-architecture
   category: engineering
@@ -82,6 +137,17 @@ skills:
   - astro
   - static-site
   - social-sharing
+  tool_agnostic: true
+- name: caveman
+  category: tooling
+  path: tooling/caveman
+  description: Ultra-compressed communication mode. Cuts token usage ~75% by dropping
+    filler while keeping full technical accuracy.
+  version: 1.0.0
+  tags:
+  - communication
+  - tokens
+  - brevity
   tool_agnostic: true
 - name: extract-pdf-text-on-macos-with-pypdf
   category: tooling
