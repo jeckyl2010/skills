@@ -15,6 +15,35 @@ skills:
   - copywriting
   - consultancy-sites
   tool_agnostic: true
+- name: adr-generator
+  category: engineering
+  path: engineering/adr-generator
+  description: Generate Architecture Decision Records (MADR format) from design context,
+    discussions, or review findings. Structured, auditable decision artifacts.
+  version: 1.0.0
+  tags:
+  - architecture
+  - adr
+  - decision-records
+  - documentation
+  - governance
+  tool_agnostic: true
+- name: architecture-document-review
+  category: engineering
+  path: engineering/architecture-document-review
+  description: Review architecture documents for defensibility, boundary clarity,
+    ownership, survivability, and testability. Works beyond manufacturing.
+  version: 1.0.0
+  tags:
+  - architecture
+  - review
+  - manufacturing
+  - isa-95
+  - idmz
+  - ot
+  - governance
+  - risk
+  tool_agnostic: true
 - name: astro-static-sites
   category: engineering
   path: engineering/astro-static-sites
@@ -69,6 +98,49 @@ skills:
   - design
   - maintainability
   tool_agnostic: true
+- name: consulting-deliverable
+  category: engineering
+  path: engineering/consulting-deliverable
+  description: 'Write client-ready consulting deliverables: findings reports, architecture
+    recommendations, executive summaries. Evidence-based, no fluff.'
+  version: 1.0.0
+  tags:
+  - consulting
+  - deliverables
+  - reports
+  - findings
+  - architecture
+  - writing
+  tool_agnostic: true
+- name: debugging-methodology
+  category: engineering
+  path: engineering/debugging-methodology
+  description: Structured debugging workflow — hypothesis-driven, evidence-based,
+    reproducible. Produces auditable findings, not just a fix.
+  version: 1.0.0
+  tags:
+  - debugging
+  - troubleshooting
+  - methodology
+  - engineering
+  - incident
+  tool_agnostic: true
+- name: dependency-analysis
+  category: engineering
+  path: engineering/dependency-analysis
+  description: Audit project dependencies for outdated versions, known CVEs, licensing
+    risk, orphaned packages, and upgrade paths across any package manifest format.
+  version: 1.0.0
+  tags:
+  - dependencies
+  - security
+  - audit
+  - modernization
+  - npm
+  - python
+  - java
+  - dotnet
+  tool_agnostic: true
 - name: graphify
   category: engineering
   path: engineering/graphify
@@ -109,6 +181,36 @@ skills:
   - decision-making
   - interview
   - stress-test
+  tool_agnostic: true
+- name: manufacturing-ot-architect
+  category: engineering
+  path: engineering/manufacturing-ot-architect
+  description: Senior IT/OT architect persona for brownfield manufacturing. ISA-95
+    layering, IEC 62443 security, multi-site target architecture, resilience-first.
+  version: 1.0.0
+  tags:
+  - manufacturing
+  - ot
+  - isa-95
+  - iec-62443
+  - target-architecture
+  - idmz
+  - brownfield
+  tool_agnostic: true
+- name: risk-and-control-extraction
+  category: engineering
+  path: engineering/risk-and-control-extraction
+  description: Extract risk scenarios, control statements, evidence requirements,
+    and ownership from architecture and governance documents into structured controls.
+  version: 1.0.0
+  tags:
+  - risk
+  - controls
+  - governance
+  - architecture
+  - manufacturing
+  - compliance
+  - extraction
   tool_agnostic: true
 - name: senior-software-architecture
   category: engineering
@@ -151,6 +253,34 @@ skills:
   - static-site
   - social-sharing
   tool_agnostic: true
+- name: target-state-pattern-authoring
+  category: engineering
+  path: engineering/target-state-pattern-authoring
+  description: Author target-state architecture patterns and proposals with clear
+    problem, constraints, recommendation, trade-offs, risks, ownership, and next step.
+  version: 1.0.0
+  tags:
+  - architecture
+  - target-state
+  - patterns
+  - proposals
+  - manufacturing
+  - documentation
+  tool_agnostic: true
+- name: ai-humanizer
+  category: tooling
+  path: tooling/ai-humanizer
+  description: 'Remove AI writing patterns. Fixes 29 named tells: inflated significance,
+    vague attribution, em dash overuse, AI vocabulary, soulless structure.'
+  version: 2.5.1
+  tags:
+  - writing
+  - editing
+  - humanizer
+  - ai-writing
+  - copy
+  - documentation
+  tool_agnostic: true
 - name: caveman
   category: tooling
   path: tooling/caveman
@@ -174,4 +304,19 @@ skills:
   - macos
   - python
   - pypdf
+  tool_agnostic: true
+- name: extract-wisdom
+  category: tooling
+  path: tooling/extract-wisdom
+  description: Extract decisions, action items, open questions, and key insights from
+    meetings, transcripts, and workshops. Structured output, no padding.
+  version: 1.0.0
+  tags:
+  - meetings
+  - notes
+  - transcripts
+  - workshops
+  - extraction
+  - consulting
+  - knowledge
   tool_agnostic: true
