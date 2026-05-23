@@ -12,6 +12,9 @@ Format: `## [version] — dd.MM.yyyy`
 
 ## [1.1.0] — 23.05.2026
 
+### Added
+- `AGENTS.md`: repo-specific conventions for AI agents — skill format rules, change workflow, CHANGELOG format, commit convention
+
 ### Changed
 - `github-repo-professionalise`: Phase 1 questions now asked one at a time with multiple/single choice options where applicable; description shortened to pass 150 char schema limit
 
