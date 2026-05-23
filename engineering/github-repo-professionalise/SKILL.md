@@ -1,7 +1,7 @@
 ---
 name: github-repo-professionalise
 description: Bring a GitHub repo to professional standard — CI, security tooling, community health files, badges, Dependabot, CodeQL, and Scorecard.
-version: "1.1.0"
+version: "1.3.0"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -13,7 +13,8 @@ Two battle-tested reference implementations:
 - Python/uv: `jeckyl2010/mkdocs2confluence`
 - TypeScript/Bun: `jeckyl2010/risk-assistant`
 
-Template files are in `templates/` — load with `skill_view(file_path=...)`.
+Template files are in `templates/` — load with `skill_view(file_path=...)`.\
+Reference file: `references/skill-repo-governance.md` — patterns for AI skill/prompt library repos (deprecation metadata, index staleness gate, semver PR discipline, AGENTS.md conventions).
 
 ---
 
@@ -43,7 +44,11 @@ Questions in order:
    b) npm
    c) Not published
 
-5. **Codecov** (single choice) — coverage reporting
+5. **Repo type** (single choice) — affects which quality gates apply
+   a) Application or library with a test suite
+   b) Documentation / markdown / tool repo (no test suite, no package)
+
+6. **Codecov** (single choice — skip if repo type is (b) above)
    a) Yes — `CODECOV_TOKEN` already set in repo secrets
    b) Yes — token not yet set (will need to configure)
    c) No
@@ -169,6 +174,7 @@ pre-commit run --all-files   # verify clean before first commit
 | `.github/ISSUE_TEMPLATE/bug_report.md` | ✅ | Environment, steps, output block |
 | `.github/ISSUE_TEMPLATE/feature_request.md` | ✅ | Problem / solution / alternatives |
 | `.github/PULL_REQUEST_TEMPLATE.md` | ✅ | Checklist anchored to actual project standards |
+| `AGENTS.md` | ✅ | Repo-specific conventions for AI agents — injected automatically by Hermes when working in this repo. Encode: skill format rules, change workflow, CHANGELOG discipline, commit convention. |
 | `CODE_OF_CONDUCT.md` | ❌ | Skip for single-maintainer projects — performative overhead |
 | `SUPPORT.md` | ❌ | Skip unless there is a community to support |
 
@@ -300,6 +306,8 @@ Before the first commit, verify:
 
 ## Pitfalls
 
+**Markdown/tool repos (no test suite).** Skip Codecov entirely — nothing to measure. Skip language-specific badges (Python, Bun, Biome, etc.) unless the repo has runnable scripts. Dependabot: scope to `github-actions` ecosystem only. Pre-commit: gitleaks + repo-specific validators only (no ruff, mypy, biome). Consider enabling GitHub Discussions — low-friction feedback channel for repos where formal bug reports are overkill.
+
 **osv-scanner-action has no floating @v2 tag.** Only point releases (`@v2.3.8`). Also a reusable workflow, not a composite action — cannot be used as a step. Always use the CLI download in `templates/checks-typescript-bun.yml`.
 
 **Codecov empty token in reusable workflow.** `secrets: inherit` in ci.yml passes repo secrets through, but `checks.yml` must declare `CODECOV_TOKEN` under `on.workflow_call.secrets`. If `INPUT_CODECOV_TOKEN:` is blank in CI logs, check the declaration and secret name match exactly.
@@ -313,6 +321,10 @@ Before the first commit, verify:
 **Biome schema version mismatch in pre-commit.** After updating biome, run `bunx biome migrate --write`. Otherwise pre-commit fails with a schema version error.
 
 **knip flags UI barrel exports.** Add UI barrel files (shadcn etc.) to `entry`, not `ignore`. See section 3i.
+
+**Skill description over 150 characters blocks commit.** If this repo runs `validate.py` as a pre-commit hook, skill descriptions over 150 chars will fail on the first commit. Check length before writing: `python3 -c "print(len('your description here'))"`. Fix by shortening — do not widen the schema limit.
+
+**CHANGELOG discipline — two steps, both required.** First: add the change under `[Unreleased]`. Second: once the version is known, promote `[Unreleased]` entries to a proper versioned section (`## [x.y.z] — dd.MM.yyyy`). Leaving changes stranded under `[Unreleased]` after a version bump is incomplete. Do both in the same commit.
 
 **Skill description too long blocks every commit.** If the repo runs a schema validator as a pre-commit hook, descriptions over the `maxLength` (150 chars in this library) block all commits — not just the one touching the skill file. Check lengths before installing pre-commit, not after.
 
