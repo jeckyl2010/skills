@@ -1,18 +1,10 @@
 ---
 name: github-repo-professionalise
-description: >
-  Analyse a GitHub repo and bring it up to a professional, maintainable standard:
-  CI quality gates, security tooling, community health files, badges, Dependabot,
-  OSSF Scorecard, CodeQL, coverage reporting. Covers TypeScript/Bun and Python/uv stacks.
-  Based on jeckyl2010/risk-assistant (TypeScript) and jeckyl2010/mkdocs2confluence (Python).
-triggers:
-  - "professionalise this repo"
-  - "set up the repo properly"
-  - "add ci and quality gates"
-  - "make this repo look professional"
-  - "add security scanning"
-  - "add badges"
-  - "community health files"
+description: Analyse a GitHub repo and bring it up to a professional, maintainable standard — CI quality gates, security tooling, community health files, badges, Dependabot, OSSF Scorecard, CodeQL, coverage reporting. Covers TypeScript/Bun and Python/uv stacks.
+version: "1.0.0"
+tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
+tool_agnostic: true
+authors: [Anders Hybertz]
 ---
 
 # GitHub Repo Professionalisation
