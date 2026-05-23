@@ -1,7 +1,7 @@
 ---
 name: github-repo-professionalise
 description: Bring a GitHub repo to professional standard — CI, security tooling, community health files, badges, Dependabot, CodeQL, and Scorecard.
-version: "1.0.0"
+version: "1.1.0"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -288,6 +288,16 @@ One commit per logical group:
 
 ---
 
+## Checklist before committing
+
+Before the first commit, verify:
+- [ ] CHANGELOG.md updated — add an `[Unreleased]` section with a summary of what changed
+- [ ] `index.yaml` current — run `python3 scripts/index_builder.py` if the repo has one (sync-skills handles this automatically for the Hermes skills repo)
+- [ ] All skill descriptions ≤ 150 chars if a schema validator is in place — check early, not at commit time
+- [ ] `git pull --rebase` before `git push` if another process (e.g. sync-skills) may have pushed commits to the same branch in the same session
+
+---
+
 ## Pitfalls
 
 **osv-scanner-action has no floating @v2 tag.** Only point releases (`@v2.3.8`). Also a reusable workflow, not a composite action — cannot be used as a step. Always use the CLI download in `templates/checks-typescript-bun.yml`.
@@ -303,3 +313,9 @@ One commit per logical group:
 **Biome schema version mismatch in pre-commit.** After updating biome, run `bunx biome migrate --write`. Otherwise pre-commit fails with a schema version error.
 
 **knip flags UI barrel exports.** Add UI barrel files (shadcn etc.) to `entry`, not `ignore`. See section 3i.
+
+**Skill description too long blocks every commit.** If the repo runs a schema validator as a pre-commit hook, descriptions over the `maxLength` (150 chars in this library) block all commits — not just the one touching the skill file. Check lengths before installing pre-commit, not after.
+
+**CHANGELOG.md is easy to forget.** Every professionalisation run touches multiple files. Add the CHANGELOG update to the commit checklist explicitly — it will be missed otherwise.
+
+**`git push` rejected when sync-skills ran in the same session.** `sync-skills push` commits and pushes to the remote. If you then commit locally and push, the push is rejected. Always `git pull --rebase && git push`.
