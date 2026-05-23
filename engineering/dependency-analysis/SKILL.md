@@ -87,6 +87,13 @@ Prioritized action list:
 2. Short-term: high CVEs and abandoned packages in critical paths
 3. Planned: version hygiene and licensing cleanup
 
+## Executing the update (Bun workspaces)
+After auditing, the update sequence is:
+1. `cd <workspace> && bun update` — bumps all packages to latest matching semver
+2. `bun run typecheck` — verify no type regressions before running tests
+3. Run the full test suite only after typecheck is clean
+4. Pay extra attention to major-version library bumps (e.g. Zod 3→4, React 18→19) — check for breaking API changes in `safeParse`, schema declarations, type inference
+
 ## Common Mistakes To Avoid
 
 - Treating dev dependencies as low-risk without checking build-chain exposure

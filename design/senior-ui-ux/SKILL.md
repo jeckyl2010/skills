@@ -112,6 +112,16 @@ When reviewing a solo consultant, boutique agency, or high-trust professional-se
 - Prefer conversion support for cautious buyers: concrete reasons to reach out, what to include in a first message, and what happens next.
 - If the site already has a strong calm/premium tone, prefer tightening and re-sequencing over rewriting the brand voice.
 
+## Animation and motion constraints
+
+Anders's projects follow a strict motion policy:
+- Opacity-only fades are acceptable: `initial={{ opacity: 0 }} animate={{ opacity: 1 }}`
+- Y-axis slides (`y: 20`, `y: -10`, etc.) are NOT acceptable — even small ones
+- Staggered list entry animations (`delay: index * 0.05`) are NOT acceptable
+- Framer-motion is a large dependency that tends to get applied pervasively and with the wrong defaults. Before adding it to a project, confirm the scope is limited to a controlled wrapper component that enforces the above constraints
+- If framer-motion is already in a project: audit all usages. Replace staggered-slide patterns with a single constrained wrapper or drop the library in favour of CSS `transition-opacity`
+- The correct consolidation: create one `<FadeIn>` wrapper component that only ever does opacity fade (short duration, no y, no stagger), and route all motion through it
+
 ## Pitfalls to avoid
 - Optimizing for visual novelty over usability
 - Too many competing calls to action

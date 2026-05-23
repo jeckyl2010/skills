@@ -238,6 +238,18 @@ skills:
   - testing
   - implementation
   - maintainability
+  - bun
+  - test-scaffold
+  - deduplication
+  - derived-stats
+  - nextjs
+  - client-server-boundary
+  - vscode
+  - framer-motion
+  - animation-cleanup
+  - turbopack-cache
+  - dev-server
+  - watch-alerts
   tool_agnostic: true
 - name: static-site-seo-and-og
   category: engineering
