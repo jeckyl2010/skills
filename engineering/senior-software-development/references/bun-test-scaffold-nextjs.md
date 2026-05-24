@@ -70,5 +70,24 @@ For `parseX(unknown[])` functions that silently drop bad entries:
 - Empty array input
 - Real-file integration test confirming `result.length === expectedCount`
 
+## YAML serialisation contracts
+
+When storage writes entries to a YAML file, test the contract at the serialised layer — not just in-memory:
+
+```ts
+it("stores paths as relative, not absolute", async () => {
+  await storage.addSystem({ name: "foo", path: "/Users/me/Repos/foo" });
+  const raw = parse(await fs.readFile(portfolioPath, "utf-8")) as Portfolio;
+  const entry = raw.systems.find((s) => s.name === "foo")!;
+  expect(path.isAbsolute(entry.path)).toBe(false);
+});
+```
+
+Key assertions:
+- `path.isAbsolute(entry.path) === false` — portable across machines
+- Round-trip: write then read back and compare to input value
+- Field ordering and whitespace do not matter; only the parsed value matters
+- Use `import { parse } from "yaml"` (not `JSON.parse`) to read back — yaml preserves comments and multiline strings differently than JSON
+
 ## Last updated
 Session: risk-assistant project revival (2026-05)
