@@ -220,6 +220,19 @@ skills:
   - idmz
   - brownfield
   tool_agnostic: true
+- name: material-for-mkdocs
+  category: engineering
+  path: engineering/material-for-mkdocs
+  description: Author and maintain Material for MkDocs sites — .pages nav, assets,
+    frontmatter, Mermaid, admonitions, and Diátaxis structure.
+  version: 1.0.0
+  tags:
+  - mkdocs
+  - material
+  - documentation
+  - static-site
+  - diátaxis
+  tool_agnostic: true
 - name: risk-and-control-extraction
   category: engineering
   path: engineering/risk-and-control-extraction
@@ -304,6 +317,19 @@ skills:
   - ai-writing
   - copy
   - documentation
+  tool_agnostic: true
+- name: antislop
+  category: tooling
+  path: tooling/antislop
+  description: Detect and fix AI writing patterns (slop). 45+ patterns across 3 severity
+    tiers with scoring and an editor mode that fixes problems directly.
+  version: 1.0.0
+  tags:
+  - writing
+  - ai-detection
+  - humanizer
+  - content-quality
+  - editing
   tool_agnostic: true
 - name: caveman
   category: tooling

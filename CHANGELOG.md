@@ -8,6 +8,12 @@ Format: `## [version] — dd.MM.yyyy`
 
 ## [Unreleased]
 
+### Added
+- `tooling/antislop`: new skill — detect and fix AI writing patterns (slop), 45+ patterns across 3 severity tiers, scoring system, editor mode
+
+### Changed
+- `engineering/material-for-mkdocs`: trimmed description to pass 150-char validator limit
+
 ---
 
 ## [1.2.5] — 24.05.2026
