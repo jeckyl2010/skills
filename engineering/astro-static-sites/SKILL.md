@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.0.1"
+version: "1.0.4"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -203,6 +203,34 @@ Check for leftover artifacts that Astro never uses:
 
 None of these break Astro builds (silently ignored), but they confuse future contributors. Safe to delete if nothing in `src/` references `static/`.
 
+## Featured card in an auto-fit grid
+
+When one card in an `auto-fit minmax()` grid has significantly more content than its peers, use `grid-column: 1 / -1` to span full width. Keep the inner layout identical to sibling cards (stacked, no inner grid) — a two-column inner layout (e.g. year left / content right) breaks visual consistency with the other cards and looks odd.
+
+```css
+.award-item--featured {
+  grid-column: 1 / -1;
+  /* no inner grid — use the same stacked layout as sibling cards */
+}
+```
+
+Apply the modifier class conditionally in Astro:
+
+```astro
+<div class={`award-item${a.featured ? ' award-item--featured' : ''}`}>
+  <div class="award-year">{a.year}</div>
+  <div class="award-content">
+    <h4>{a.title}</h4>
+    <p>{a.issuer}</p>
+    {a.detail && <p>{a.detail}</p>}
+  </div>
+</div>
+```
+
+Mark the entry with `featured: true` in the data array. This pattern is useful for any list where one item carries significantly more content — recognition sections, service cards, case studies.
+
+Do not add a `max-width` to the inner content div — the card's own padding and border already frame the content. A `max-width` just creates awkward empty space on the right inside a bordered card.
+
 ## Pitfalls
 
 - Page header bleed in flex section containers: if a section uses `display: flex; flex-direction: column; gap: Xrem`, the gap also applies between section-label, h1, and lead text. Fix: wrap the header group in a single `.page-header` div.
@@ -213,3 +241,4 @@ None of these break Astro builds (silently ignored), but they confuse future con
 - `og:image` must be an absolute URL. Use `new URL(ogImage, Astro.site)` — not string concatenation.
 - `og:site_name` is easy to miss. If the brand name contains `<` or `>`, use HTML entities (`COM&lt;tech&gt;`).
 - ViewTransitions replaces the head on page navigation; confirm meta tags are in the persistent layout, not page-level slots.
+- **patch mode corruption in .astro files**: `mode=patch` (V4A format) is unreliable in `.astro` files — the diff tool can leak git diff headers (`+++ b/src/pages/about.astro`) verbatim into the file content, corrupting both frontmatter data arrays and template markup. This has triggered twice in practice: once editing a JS data array in the frontmatter block, once editing a `.map()` render section in the template. Recovery is always a `mode=replace` with a clean old/new pair that includes the corrupted diff-header text. Prevention: always use `mode=replace` for `.astro` files. The only exception where `mode=patch` is safe is small, isolated CSS additions in `<style>` blocks at the bottom of the file, where context lines are stable and the edit is additive-only.

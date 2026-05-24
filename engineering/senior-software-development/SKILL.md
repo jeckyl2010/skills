@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.0.1"
+version: "1.0.5"
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability, bun, test-scaffold, deduplication, derived-stats, nextjs, client-server-boundary, vscode, framer-motion, animation-cleanup, turbopack-cache, dev-server, watch-alerts]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -107,14 +107,31 @@ See `references/bun-test-scaffold-nextjs.md` for the full snapshot/restore patte
 
 ## Cross-platform portability on project revival
 When picking up a project that was last active on a different OS (e.g. Windows → macOS):
-- Scan all YAML/config files for absolute paths — `portfolio.yaml`, `docker-compose.yml`, `.env` files. Windows absolute paths (`C:\\Repos\\...`) fail silently on macOS; convert to relative paths.
+- Scan all YAML/config files for absolute paths — `portfolio.yaml`, `docker-compose.yml`, `.env` files. Windows absolute paths (`C:\\\\Repos\\\\...`) fail silently on macOS; convert to relative paths.
 - Check `next.config.ts` / similar for hardcoded dev machine IPs in `allowedDevOrigins` — harmless but dead config, clean up.
 - Verify runtime tools: `bun`, `node`, `python3`. Bun binary at `~/.bun/bin/bun` may not be on PATH in subshells — always `export PATH=$HOME/.bun/bin:$PATH` when invoking bun in scripts or execute_code.
 
+### Portable manifest paths (YAML config files)
+When code writes paths into a shared config file (`portfolio.yaml`, `docker-compose.yml`, registry manifests), always store paths relative to the config file's directory — not the raw user-supplied path (which may be absolute) and not the resolved absolute path.
+
+```ts
+// ✗ Stores whatever the caller passed — could be absolute
+manifest.systems.push({ name: id, path: systemPath });
+
+// ✓ Stores a path relative to where portfolio.yaml lives — portable across machines
+manifest.systems.push({
+  name: id,
+  path: path.relative(path.dirname(portfolioFilePath), absoluteSystemPath),
+});
+```
+
+This applies everywhere the write path is computed server-side from a user-supplied input. Cover with a test assertion that `path.isAbsolute(entry.path) === false` after the write — easy to verify by loading the YAML with `loadYamlFile` and checking the stored entry directly.
+
 ### Verify stale notes before acting on them
 When resuming from a "remaining work" list in memory or session notes, always check current state first — items may have been addressed while the project was idle. Do not fix what is already fixed.
-- Run a quick scan of the files mentioned in the remaining work list before proposing changes.
-- Only surface items that are still outstanding.
+- Run a quick scan (search_files + read_file at the flagged lines) of every file mentioned in the remaining work list before proposing changes.
+- Cross-reference review findings against the actual code — a finding about "hardcoded magic number" or "path traversal risk" may already be fixed. A quick read is faster than diagnosing a non-existent bug.
+- Only surface items that are still outstanding. Surface the false-positives too ("item 4 is already fixed") so the user knows the list was audited, not blindly skipped.
 
 ### Version verification when an outdated check shows an unfamiliar version
 If `bun outdated` shows a version that seems unexpected (e.g. `next 16.x` when you expected 14.x or 15.x), verify it exists on npm before researching breaking changes:
@@ -144,6 +161,19 @@ Do not rely on log output to confirm readiness when using background process tra
 If a second `bun run dev` call exits immediately with "Another next dev server is already running" and exit code 1, this is NOT a startup failure. Next.js detects the existing instance on port 3000 and terminates gracefully, printing the PID and log path of the running instance. Use `kill <pid>` from the log output if a restart is needed.
 
 ## Deduplication via re-export (TypeScript)
+
+### Behavioral divergence check
+Before removing a local copy of a utility, check whether it silently diverged from the canonical version. Common divergence: a local `deepGet` returning `undefined` for missing keys where the canonical one returns `null`. Steps:
+1. Diff the two implementations side-by-side — look for return values, error handling, and type coercions.
+2. Check every call site of the local copy for how it consumes the return value (`=== null`, `=== undefined`, `!= null`, `!value`).
+3. If consumers already guard both (`=== undefined || === null`), the divergence is harmless — remove the local copy safely.
+4. If consumers only guard one side, either fix the guards or keep the local copy and document the difference.
+
+### Type shadowing: rename the local, don't alias the import
+When a local type has the same name as an imported type from the same domain, the forced alias (`LibEvaluateResult`, `BaseType2`) is the smell — not a reason to live with the ambiguity.
+
+Pattern: the hook defines `EvaluateResult` (an API envelope with `modelDir`, `modelVersion`, `result`) while also importing `EvaluateResult` from the evaluator lib. This produces the alias hack. Fix: rename the local to be domain-specific (`EvaluateApiResponse`), import the lib type unaliased. The rename is mechanical — grep for the old export name and update all consumers.
+
 When collapsing a local copy of a type or function into a re-export from the canonical module:
 - The file must `import type { Foo }` before it can use `Foo` in local function signatures — even if it also `export type { Foo }`.
 - Ordering matters: put the `import` before the `export` re-export declaration, or TypeScript raises "Cannot find name" on the local usages.
@@ -274,6 +304,59 @@ When stripping y/x/scale/stagger animations across a codebase, work in two paral
 
 **Ideal end state:** a single `<FadeIn>` wrapper component (`initial={{ opacity: 0 }} animate={{ opacity: 1 }}`, short duration, no y/scale/stagger) that all fade-in usage routes through. Eliminates drift when framer-motion is updated or removed.
 
+## Framer-motion full removal (dependency uninstall)
+When the decision is to remove framer-motion entirely (not just reduce it):
+
+**Replacement strategy:**
+- `motion.div` with opacity fade → `<div className="animate-in fade-in duration-300">` (Tailwind 4, entry only)
+- `motion.div` with only `y` offset → plain `<div>` (drop the animation entirely)
+- `AnimatePresence` + conditional render → drop `AnimatePresence`, keep conditional render; exit snap is acceptable for non-critical UI
+- `layoutId` indicator bars → plain div, instant snap is fine
+- Uninstall: `bun remove framer-motion`
+
+**Structural pitfall — `createPortal` + `AnimatePresence`:**
+When `AnimatePresence` was the single child of `createPortal(child, container)`, stripping it leaves multiple sibling JSX nodes (comments + element) as direct arguments to `createPortal`, which is a syntax error. Wrap in a fragment:
+```tsx
+// Before (broken after AnimatePresence removal):
+return createPortal(
+  {/* comment */}
+  <div ...>,
+  document.body
+);
+// After:
+return createPortal(
+  <>
+    {/* comment */}
+    <div ...>
+  </>,
+  document.body
+);
+```
+
+**Structural pitfall — orphaned `{open && (` after AnimatePresence strip:**
+When `AnimatePresence` wraps `{open && ( <> ... </> )}`, stripping `AnimatePresence` leaves the conditional as a bare expression inside `return (...)`. Wrap the whole return in a fragment:
+```tsx
+return (
+  <>
+    {open && (
+      <> ... </>
+    )}
+  </>
+);
+```
+
+**biome-ignore comments shift with indentation:**
+After removing an `AnimatePresence` wrapper, the previously-suppressed element moves up one indentation level (and possibly one line number). Biome re-evaluates the suppress target from scratch — an existing `biome-ignore` on line N now covers a different element. Re-read the file and move or re-add the ignore comment to sit directly above the new offending line.
+
+**Python bulk-replace for motion.\* patterns:**
+Using Python regex (`re.sub`) to replace all `motion.div` / `motion.button` etc. is effective for the attribute variants (`motion.X initial=... animate=... className=...`), but leaves structural issues to fix manually:
+- Orphaned closing `</motion.div>` and `</AnimatePresence>` tags
+- Remaining `{open && (` without a wrapper (see above)
+Always run `bun run typecheck` immediately after the script pass and fix structural issues before committing.
+
+**Pre-commit hook stash trap:**
+The pre-commit hook stashes unstaged files and runs against the staged snapshot. If you make lint/format fixes after `git add -A`, those fixes are in the working tree but not staged — the hook sees the pre-fix version and fails. Always run `git add -A` again immediately before the commit attempt that follows any post-stage fixes.
+
 ## TypeScript CI toolchain (Bun / Next.js)
 When wiring up quality gates for a TypeScript project, use this tool stack:
 - **gitleaks** — secret scanning (pre-commit + CI)
@@ -313,6 +396,23 @@ codecov-action config:
 Codecov also requires the repo to be activated on codecov.io after the first
 successful upload — the CODECOV_TOKEN alone does not register the repo. Visit
 codecov.io/gh/OWNER/REPO and activate it.
+
+## Code hygiene principles
+
+Two instincts, same outcome:
+
+**Broken windows** — one crack signals nobody cares, so more cracks follow. Dead CSS rules, empty rule blocks, stale TODO comments, a test suite that is always red. Each one lowers the bar for the next person. Fix them on sight, even if they are not your mess.
+
+**Boy Scout rule** — leave the codebase at least as clean as you found it. Ideally a little cleaner. Not a full refactor — just: remove the empty rule you noticed while adding a feature, rename the confusing variable while you are already in that file, delete the commented-out block that has been there for two years.
+
+In practice:
+- No empty CSS rules, no dead selectors.
+- No commented-out code in commits unless it carries an explicit explanation.
+- No TODO comments older than the current sprint without a linked issue.
+- No unused imports, unused variables, unused constants.
+- If you touch a file, leave it cleaner than you found it.
+
+These are not perfection goals. They are hygiene — the baseline that keeps entropy from compounding.
 
 ## Pitfalls to avoid
 - Jumping to implementation before understanding the problem

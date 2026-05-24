@@ -49,7 +49,7 @@ skills:
   path: engineering/astro-static-sites
   description: Build, review, and extend Astro static sites — config, integrations,
     SEO, deployment to GitHub Pages.
-  version: 1.0.1
+  version: 1.0.4
   tags:
   - astro
   - static-site
@@ -253,7 +253,7 @@ skills:
   path: engineering/senior-software-development
   description: Apply senior-level engineering judgment to code review, implementation,
     debugging, refactoring, and delivery planning.
-  version: 1.0.1
+  version: 1.0.5
   tags:
   - code-review
   - refactoring
