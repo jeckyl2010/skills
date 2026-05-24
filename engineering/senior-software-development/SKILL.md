@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.0.5"
+version: "1.0.6"
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability, bun, test-scaffold, deduplication, derived-stats, nextjs, client-server-boundary, vscode, framer-motion, animation-cleanup, turbopack-cache, dev-server, watch-alerts]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -406,7 +406,7 @@ Two instincts, same outcome:
 **Boy Scout rule** — leave the codebase at least as clean as you found it. Ideally a little cleaner. Not a full refactor — just: remove the empty rule you noticed while adding a feature, rename the confusing variable while you are already in that file, delete the commented-out block that has been there for two years.
 
 In practice:
-- No empty CSS rules, no dead selectors.
+- No empty blocks, dead rules, or unused declarations left behind.
 - No commented-out code in commits unless it carries an explicit explanation.
 - No TODO comments older than the current sprint without a linked issue.
 - No unused imports, unused variables, unused constants.
