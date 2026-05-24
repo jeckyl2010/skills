@@ -1,7 +1,7 @@
 ---
 name: antislop
 description: Detect and fix AI writing patterns (slop). 45+ patterns across 3 severity tiers with scoring and an editor mode that fixes problems directly.
-version: "1.0.0"
+version: "1.0.1"
 tags:
   - writing
   - ai-detection
@@ -278,6 +278,8 @@ Fix priority:
 5. Vary sentence lengths where uniformity detected
 
 To audit without editing, user must explicitly request "audit only."
+
+Architecture and technical documentation has different expectations than blog posts or marketing copy. In those contexts, bullet lists are not "list addiction" — they are the format. Title Case is not a style mistake if the project convention uses it. Apply pattern detection with calibration to context: flag what genuinely sounds AI-generated for the genre, not what violates blog-post norms.
 
 ---
 

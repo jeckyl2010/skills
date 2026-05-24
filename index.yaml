@@ -323,7 +323,7 @@ skills:
   path: tooling/antislop
   description: Detect and fix AI writing patterns (slop). 45+ patterns across 3 severity
     tiers with scoring and an editor mode that fixes problems directly.
-  version: 1.0.0
+  version: 1.0.1
   tags:
   - writing
   - ai-detection
