@@ -10,6 +10,25 @@ Format: `## [version] — dd.MM.yyyy`
 
 ---
 
+## [1.2.5] — 24.05.2026
+
+### Added
+- `senior-software-development/references/dev-server-and-deps.md`: dev server startup, dep updates, cross-platform portability, portable manifest paths
+- `senior-software-development/references/nextjs-patterns.md`: client/server boundary, TypeScript deduplication, API route security, derived stats
+- `senior-software-development/references/framer-motion.md`: framer-motion audit and full removal
+- `senior-software-development/references/vscode-bun.md`: VS Code tasks for Bun workspaces
+- `schemas/skill_schema.json`: `specificity` (enum), `parent`, `triggers` fields; `tags` and `authors` promoted to `required`
+- `templates/SKILL.template.md`: documented `specificity`, `parent`, `triggers` optional fields
+
+### Changed
+- `senior-software-development`: refactored to lean principles + `## References` routing table (99 lines); all stack-specific content moved to dedicated reference files; `specificity: generic` added; tags trimmed to generic only; bumped to `1.2.0`
+- `senior-software-development/references/bun-test-scaffold-nextjs.md`: added YAML serialisation contracts section
+- `AGENTS.md`: frontmatter block updated with new optional fields; `triggers` corrected from "never use it" to "valid on child skills only"; `tags` and `authors` marked required
+- `scripts/validate.py`: removed `--fix` ghost flag from docstring; `pip` → `uv`; parent name resolution check added
+- `scripts/index_builder.py`: surfaces `specificity`, `parent`, `triggers` in index; `pip` → `uv`
+
+---
+
 ## [1.2.4] — 24.05.2026
 
 ### Changed

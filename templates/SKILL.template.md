@@ -22,6 +22,23 @@ tags: [tag1, tag2]
 # Common tags: code-review, git, testing, communication, documentation,
 #              planning, refactoring, architecture, automation, debugging
 
+specificity: generic
+# Optional. Scope of this skill:
+#   generic          — principles and patterns, language-agnostic
+#   stack-specific   — tied to a tech or toolchain (Next.js, Bun, CSS)
+#   context-specific — tied to a domain or project
+# Omit for skills that do not participate in a parent/child hierarchy.
+
+# parent: parent-skill-name
+# Optional. Kebab-case name of the parent skill this extends.
+# When set, the parent skill should be loaded first — this skill adds to it.
+# Only set on child skills (specificity: stack-specific or context-specific).
+
+# triggers: [keyword1, keyword2]
+# Optional. Keywords signalling this child skill is relevant to the current task.
+# Lets the agent decide whether to load this skill without reading the full body.
+# Only meaningful on child skills.
+
 tool_agnostic: true
 # Optional. Set true if the body contains no tool-specific syntax, CLI names,
 # or provider references — meaning any AI agent can follow the instructions.

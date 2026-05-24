@@ -7,8 +7,7 @@ against the full schema. Community skills are skipped — we do not own their fr
 Parse errors are reported for all skills regardless of ownership.
 
 Usage:
-    python3 scripts/validate.py           # validate all skills
-    python3 scripts/validate.py --fix     # report fixable issues
+    python3 scripts/validate.py
 """
 
 import json
@@ -19,13 +18,13 @@ from pathlib import Path
 try:
     import jsonschema
 except ImportError:
-    print("jsonschema not installed. Run: pip install jsonschema")
+    print("jsonschema not installed. Run: uv pip install jsonschema")
     sys.exit(1)
 
 try:
     import yaml
 except ImportError:
-    print("pyyaml not installed. Run: pip install pyyaml")
+    print("pyyaml not installed. Run: uv pip install pyyaml")
     sys.exit(1)
 
 ROOT = Path(__file__).parent.parent
@@ -68,6 +67,13 @@ def main():
         print("No SKILL.md files found.")
         sys.exit(0)
 
+    # Build name lookup for parent resolution
+    known_names = set()
+    for skill_path in skills:
+        data, _ = extract_frontmatter(skill_path)
+        if data and "name" in data:
+            known_names.add(data["name"])
+
     errors = []
     warnings = []
     skipped = []
@@ -91,6 +97,10 @@ def main():
             name_error = validate_name_matches_dir(skill_path, data["name"])
             if name_error:
                 errors.append(f"  {rel}: {name_error}")
+
+        if data and "parent" in data:
+            if data["parent"] not in known_names:
+                errors.append(f"  {rel}: parent '{data['parent']}' does not match any known skill name")
 
         # Deprecation warnings — not errors, but visible
         if data and "deprecated_since" in data:

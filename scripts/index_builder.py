@@ -15,7 +15,7 @@ from datetime import date
 try:
     import yaml
 except ImportError:
-    print("pyyaml not installed. Run: pip install pyyaml")
+    print("pyyaml not installed. Run: uv pip install pyyaml")
     sys.exit(1)
 
 ROOT = Path(__file__).parent.parent
@@ -52,6 +52,9 @@ def main():
             "path": str(rel_dir),
             "description": data.get("description", ""),
             "version": data.get("version", ""),
+            "specificity": data.get("specificity", None),
+            "parent": data.get("parent", None),
+            "triggers": data.get("triggers", []),
             "tags": data.get("tags", []),
             "tool_agnostic": data.get("tool_agnostic", None),
             "tested_on": data.get("tested_on", None),

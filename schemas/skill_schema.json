@@ -3,7 +3,7 @@
   "title": "Skill frontmatter",
   "description": "YAML frontmatter schema for SKILL.md files",
   "type": "object",
-  "required": ["name", "description", "version"],
+  "required": ["name", "description", "version", "tags", "authors"],
   "additionalProperties": false,
   "properties": {
     "name": {
@@ -24,16 +24,31 @@
     "tags": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Optional tags for discovery and filtering"
-    },
-    "tool_agnostic": {
-      "type": "boolean",
-      "description": "True if the skill body contains no tool-specific syntax or provider references"
+      "description": "Tags for discovery and filtering"
     },
     "authors": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Optional list of authors"
+      "description": "List of authors"
+    },
+    "specificity": {
+      "type": "string",
+      "enum": ["generic", "stack-specific", "context-specific"],
+      "description": "Scope of the skill: generic (language-agnostic), stack-specific (tied to a tech or toolchain), or context-specific (tied to a domain or project)"
+    },
+    "parent": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Name of the parent skill this extends (kebab-case). Child skills are loaded alongside their parent."
+    },
+    "triggers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Keywords signalling this child skill is relevant. Valid only on child skills (specificity: stack-specific or context-specific)."
+    },
+    "tool_agnostic": {
+      "type": "boolean",
+      "description": "True if the skill body contains no tool-specific syntax or provider references"
     },
     "tested_on": {
       "type": "array",

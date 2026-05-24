@@ -14,17 +14,21 @@ Every skill we write and own must have this exact frontmatter. No exceptions.
 name: skill-name              # kebab-case, matches directory name exactly
 description: one-liner        # required, max 150 characters
 version: "1.0.0"              # quoted SemVer
-tags: [tag1, tag2]            # array
-tool_agnostic: true
-authors: [Anders Hybertz]
+tags: [tag1, tag2]            # required array
+tool_agnostic: true           # omit or set false for stack-specific skills
+authors: [Anders Hybertz]     # required
 tested_on: []                 # recommended: ['claude-sonnet-4.6 (YYYY-MM-DD)']
+# specificity: generic        # optional: generic | stack-specific | context-specific
+# parent: skill-name          # optional: child skills only — kebab-case name of parent
+# triggers: [keyword1, ...]   # optional: child skills only — signals when this skill is relevant
 # deprecated_since: "x.y.z"  # optional: set when deprecating; triggers validator warning
-# superseded_by: skill-name  # optional: set alongside deprecated_since
+# superseded_by: skill-name   # optional: set alongside deprecated_since
 ---
 ```
 
 Rules:
-- `triggers` is not a valid field — never use it
+- `triggers` is valid only on child skills (`specificity: stack-specific` or `context-specific`) — never on generic/parent skills
+- `parent` must reference an existing skill name — the validator checks this
 - Hub-sourced or third-party skills (missing `authors: [Anders Hybertz]`) are not ours to modify
 - Description must be under 150 characters — validate before committing
 - When deprecating a skill: set `deprecated_since` + `superseded_by`, update CHANGELOG, do not delete until superseding skill is stable
