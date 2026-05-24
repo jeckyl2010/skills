@@ -1,4 +1,4 @@
-generated: '2026-05-23'
+generated: '2026-05-24'
 skills:
 - name: senior-ui-ux
   category: design
@@ -146,7 +146,7 @@ skills:
   path: engineering/github-repo-professionalise
   description: Bring a GitHub repo to professional standard — CI, security tooling,
     community health files, badges, Dependabot, CodeQL, and Scorecard.
-  version: 1.4.0
+  version: 1.4.1
   tags:
   - github
   - ci

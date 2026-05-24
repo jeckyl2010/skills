@@ -1,7 +1,7 @@
 ---
 name: github-repo-professionalise
 description: Bring a GitHub repo to professional standard — CI, security tooling, community health files, badges, Dependabot, CodeQL, and Scorecard.
-version: "1.4.0"
+version: "1.4.1"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -332,3 +332,7 @@ Before the first commit, verify:
 **CHANGELOG.md is easy to forget.** Every professionalisation run touches multiple files. Add the CHANGELOG update to the commit checklist explicitly — it will be missed otherwise.
 
 **`git push` rejected when sync-skills ran in the same session.** `sync-skills push` commits and pushes to the remote. If you then commit locally and push, the push is rejected. Always `git pull --rebase && git push`.
+
+**`raw.githubusercontent.com` CDN lag.** After a successful `git push`, the raw file URL may serve a stale version for 1–5 minutes. This is Fastly edge cache — browser cache clears do not help. If a user reports "the change isn't showing", confirm the push landed (`git log origin/main`) and wait. Do not re-push or re-patch based on CDN lag alone.
+
+**Skill version must be quoted SemVer with three parts.** `version: "1.0"` is not valid — use `"1.0.0"`. The schema accepts two-part versions silently but AGENTS.md requires three-part. If backfilling, set to `"1.0.1"` (patch bump) to signal the format correction without implying a content change. Validate before syncing: grep for `version: "` and check each value has two dots.
