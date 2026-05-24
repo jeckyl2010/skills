@@ -10,6 +10,26 @@ Format: `## [version] — dd.MM.yyyy`
 
 ---
 
+## [1.2.4] — 24.05.2026
+
+### Changed
+- `senior-software-development`: stripped all stack-specific content (Bun, Next.js, Turbopack, Framer Motion, VS Code); distilled generic testing guidance from the good parts; cleaned tags; bumped to `1.1.0`
+
+---
+
+## [1.2.3] — 24.05.2026
+
+### Fixed
+- `manufacturing-ot-architect`: added `authors: [Anders Hybertz]`, `tested_on: []`, fixed unquoted version to `"1.0.1"`
+- `caveman`: added `tested_on: []` to frontmatter; bumped to `1.0.1`
+- `scripts/validate.py`: skip community skills (those without `authors: [Anders Hybertz]`) during schema validation — parse errors still reported for all skills
+
+### Changed
+- `AGENTS.md`: `tested_on` promoted from optional to recommended in frontmatter block
+- `.gitignore`: added `.venv/`, `.pytest_cache/`, `*.egg-info/`
+
+---
+
 ## [1.2.1] — 23.05.2026
 
 ### Fixed

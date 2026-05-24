@@ -17,7 +17,7 @@ version: "1.0.0"              # quoted SemVer
 tags: [tag1, tag2]            # array
 tool_agnostic: true
 authors: [Anders Hybertz]
-tested_on: []                 # optional: ['claude-sonnet-4.6 (YYYY-MM-DD)']
+tested_on: []                 # recommended: ['claude-sonnet-4.6 (YYYY-MM-DD)']
 # deprecated_since: "x.y.z"  # optional: set when deprecating; triggers validator warning
 # superseded_by: skill-name  # optional: set alongside deprecated_since
 ---

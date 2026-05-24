@@ -9,5 +9,6 @@ repos:
       - id: validate-skills
         name: Validate skills
         entry: python3 scripts/validate.py
-        language: system
+        language: python
+        additional_dependencies: [jsonschema, pyyaml]
         pass_filenames: false

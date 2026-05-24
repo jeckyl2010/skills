@@ -2,6 +2,10 @@
 """
 validate.py — validate all SKILL.md frontmatter against schemas/skill_schema.json
 
+Only owned skills (those with authors containing "Anders Hybertz") are validated
+against the full schema. Community skills are skipped — we do not own their frontmatter.
+Parse errors are reported for all skills regardless of ownership.
+
 Usage:
     python3 scripts/validate.py           # validate all skills
     python3 scripts/validate.py --fix     # report fixable issues
@@ -26,6 +30,7 @@ except ImportError:
 
 ROOT = Path(__file__).parent.parent
 SCHEMA_PATH = ROOT / "schemas" / "skill_schema.json"
+OWNER = "Anders Hybertz"
 
 def load_schema():
     return json.loads(SCHEMA_PATH.read_text())
@@ -42,6 +47,11 @@ def extract_frontmatter(path: Path):
         return data, None
     except yaml.YAMLError as e:
         return None, f"YAML parse error: {e}"
+
+def is_owned(data: dict) -> bool:
+    """Return True if this skill is owned by the repo author."""
+    authors = data.get("authors", [])
+    return isinstance(authors, list) and OWNER in authors
 
 def validate_name_matches_dir(skill_path: Path, name: str):
     dir_name = skill_path.parent.name
@@ -60,6 +70,7 @@ def main():
 
     errors = []
     warnings = []
+    skipped = []
 
     for skill_path in skills:
         rel = skill_path.relative_to(ROOT)
@@ -67,6 +78,10 @@ def main():
 
         if parse_error:
             errors.append(f"  {rel}: {parse_error}")
+            continue
+
+        if not is_owned(data):
+            skipped.append(str(rel))
             continue
 
         for error in validator.iter_errors(data):
@@ -85,7 +100,10 @@ def main():
                 msg += f" — superseded by '{superseded}'"
             warnings.append(msg)
 
-    total = len(skills)
+    owned = len(skills) - len(skipped)
+
+    if skipped:
+        print(f"Skipped {len(skipped)} community skill(s) (no '{OWNER}' in authors).\n")
 
     if warnings:
         print(f"Deprecation warnings — {len(warnings)} deprecated skill(s):\n")
@@ -94,12 +112,12 @@ def main():
         print()
 
     if errors:
-        print(f"Validation failed — {len(errors)} error(s) across {total} skill(s):\n")
+        print(f"Validation failed — {len(errors)} error(s) across {owned} owned skill(s):\n")
         for e in errors:
             print(e)
         sys.exit(1)
     else:
-        print(f"All {total} skill(s) valid.")
+        print(f"All {owned} owned skill(s) valid.")
 
 if __name__ == "__main__":
     main()
