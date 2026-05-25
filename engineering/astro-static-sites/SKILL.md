@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.0.6"
+version: "1.0.7"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -123,6 +123,7 @@ Both jobs need it independently — the runner machinery is per-job, not inherit
 - No OG/Twitter meta → unfurled links on LinkedIn/Slack show nothing
 - Dead CSS in global.css from superseded layouts → run the detection pattern below
 - Hardcoded color values in page-local `<style>` blocks — scan for `rgba(`, `#[0-9a-fA-F]` and replace with CSS custom properties
+- Class names that survive a redesign but describe the old context — e.g. `.repo-name` repurposed for service area card titles after GitHub section was removed. The class still renders, so it won't appear dead, but it carries wrong semantics and can mislead font/style audits. When auditing, check class names against what they actually render, not just whether they're referenced.
 - Hugo migration artifacts left in repo → see pitfalls section
 
 ## Dead CSS detection
