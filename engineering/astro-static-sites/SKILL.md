@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.0.5"
+version: "1.0.6"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -319,6 +319,63 @@ Common traps with the default Inter + JetBrains Mono setup on fonts.bunny.net:
 - JetBrains Mono is typically loaded at `500` but CSS rules using `var(--font-mono)` often declare `font-weight: 600`. Either load `600` or change the declarations to `500`.
 
 Detection: scan all CSS and page files for `font-weight` values, group by font-family context, and cross-check against the weights in the `fonts.bunny.net` URL.
+
+## Self-hosting fonts
+
+When third-party font latency shows up in PageSpeed (chain: HTML → CSS → woff2), self-hosting eliminates the dependency and collapses the critical path to one hop.
+
+### Steps
+
+1. Download woff2 files into `public/fonts/` — use the exact URLs from the browser network trace or PageSpeed waterfall.
+2. Add `@font-face` blocks at the top of `global.css`, one per weight, with `font-display: swap` and correct `unicode-range`.
+3. Remove all `dns-prefetch`, `preconnect`, and third-party `<link rel="stylesheet">` font references from Layout.astro.
+4. Add `<link rel="preload">` hints for the two most critical weights (typically 400 and 600) — these fire before CSS is parsed.
+5. Remaining weights load on demand as the browser processes the @font-face rules in CSS.
+
+### Preload pattern (Layout.astro)
+
+```html
+<link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/inter-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+```
+
+### @font-face pattern (global.css)
+
+```css
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+```
+
+Repeat for each weight. Place @font-face blocks at the very top of global.css, before `:root`.
+
+### Font weight audit before downloading
+
+See `references/comtech-font-audit.md` for a worked example from comtechconsulting.dk.
+
+
+Before choosing which weights to download, scan the codebase for all `font-weight` declarations:
+- Check global.css and all page/layout .astro files
+- Note: `font-weight: 800` (or any weight) has no effect if that weight isn't loaded — browser silently falls back to nearest available
+- Check that `font-family: var(--font-mono)` call sites declare a weight that is actually loaded
+- `font-weight: 400` is rarely declared explicitly but is used implicitly for all body text — always include it
+
+### Preconnect fix for third-party fonts (if not self-hosting)
+
+If staying on a third-party font CDN, the `crossorigin` preconnect must be paired with a non-crossorigin preconnect. The font CSS request is not CORS, but woff2 requests are — without both hints, the browser opens a second connection:
+
+```html
+<link rel="dns-prefetch" href="//fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+```
+
+A single `<link rel="preconnect" ... crossorigin />` is not sufficient — the non-CORS CSS request will open a second connection anyway.
 
 ## Pitfalls
 

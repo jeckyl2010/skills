@@ -49,7 +49,7 @@ skills:
   path: engineering/astro-static-sites
   description: Build, review, and extend Astro static sites — config, integrations,
     SEO, deployment to GitHub Pages.
-  version: 1.0.5
+  version: 1.0.6
   tags:
   - astro
   - static-site
