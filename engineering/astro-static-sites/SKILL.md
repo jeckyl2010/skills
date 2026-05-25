@@ -244,6 +244,24 @@ Mark the entry with `featured: true` in the data array. This pattern is useful f
 
 Do not add a `max-width` to the inner content div — the card's own padding and border already frame the content. A `max-width` just creates awkward empty space on the right inside a bordered card.
 
+## Resource hints
+
+For any third-party font or CDN host in the `<head>`, always pair dns-prefetch with preconnect, and always add `crossorigin` to the preconnect for CORS resources (fonts, stylesheets). Without `crossorigin`, the browser opens a second connection when the actual font request fires — the preconnect does nothing.
+
+```html
+<link rel="dns-prefetch" href="//fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+```
+
+Decision rules for a small static marketing site:
+- `preconnect` — critical third-party origins you know will be hit on every page (fonts, CDN)
+- `dns-prefetch` — fallback alongside every preconnect; costs nothing
+- `prefetch` — not worth adding on a 5-page site with fast static assets
+- `prerender` — Chrome/Edge only, resource-intensive; skip
+- `preload` — only if profiling reveals a critical render-path resource being fetched late
+
+Do not add hints speculatively. Each one is a real browser instruction — noise here hurts more than silence.
+
 ## Pitfalls
 
 - Page header bleed in flex section containers: if a section uses `display: flex; flex-direction: column; gap: Xrem`, the gap also applies between section-label, h1, and lead text. Fix: wrap the header group in a single `.page-header` div.
