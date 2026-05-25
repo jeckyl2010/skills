@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.0.4"
+version: "1.0.5"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -20,6 +20,19 @@ Use when working on an Astro project: reviewing, extending, debugging, or settin
 - `public/` — static assets copied verbatim; CNAME lives here for GitHub Pages custom domains.
 - `astro.config.mjs` — must set `site:` for OG URLs, canonical links, and sitemap to resolve correctly.
 - `.github/workflows/deploy.yaml` — build + upload-pages-artifact + deploy-pages pattern.
+
+## Resource hints (Layout.astro)
+
+For any third-party font or asset host, pair dns-prefetch with preconnect. The dns-prefetch acts as a fallback for browsers without preconnect support and costs nothing:
+
+```html
+<link rel="dns-prefetch" href="//fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+```
+
+The `crossorigin` attribute is required on preconnect for any CORS resource (fonts, cross-origin scripts, cross-origin API calls). Without it, the browser performs the preconnect but then opens a second connection when the resource actually fires — defeating the purpose entirely. This fails silently; no console error, no warning.
+
+Order: place dns-prefetch before preconnect. Place both before the font stylesheet `<link>`.
 
 ## SEO baseline (Layout.astro)
 
