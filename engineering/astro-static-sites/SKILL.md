@@ -293,6 +293,33 @@ GitHub Pages does not support custom HTTP response headers. Security headers (X-
 
 Cache TTL on Astro assets (default 10 minutes on GitHub Pages) also improves automatically with Cloudflare.
 
+## Font loading
+
+### Preconnect for third-party font services
+
+A single `preconnect` with `crossorigin` is not enough. The first request to a font CDN is the CSS stylesheet, which is NOT a CORS request — so the browser opens a second connection, and your preconnect sits idle until the font files arrive.
+
+Use two preconnect hints:
+
+```html
+<link rel="dns-prefetch" href="//fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+```
+
+The non-crossorigin hint handles the stylesheet; the crossorigin hint handles the woff2 files. This matches what PageSpeed Insights flags as "Unused preconnect" when only the crossorigin version is present.
+
+### Font weight verification
+
+Before shipping a font URL, verify that every `font-weight` value declared in CSS is actually loaded. Mismatches are silent — the browser falls back to the nearest available weight with no warning.
+
+Common traps with the default Inter + JetBrains Mono setup on fonts.bunny.net:
+
+- `.wordmark` often gets `font-weight: 800` but the default URL only loads up to 700. Add `800` to the Inter weight list or change the declaration to 700.
+- JetBrains Mono is typically loaded at `500` but CSS rules using `var(--font-mono)` often declare `font-weight: 600`. Either load `600` or change the declarations to `500`.
+
+Detection: scan all CSS and page files for `font-weight` values, group by font-family context, and cross-check against the weights in the `fonts.bunny.net` URL.
+
 ## Pitfalls
 
 - Page header bleed in flex section containers: if a section uses `display: flex; flex-direction: column; gap: Xrem`, the gap also applies between section-label, h1, and lead text. Fix: wrap the header group in a single `.page-header` div.
