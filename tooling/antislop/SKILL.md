@@ -1,7 +1,7 @@
 ---
 name: antislop
 description: Detect and fix AI writing patterns (slop). 45+ patterns across 3 severity tiers with scoring and an editor mode that fixes problems directly.
-version: "1.0.1"
+version: "1.0.2"
 tags:
   - writing
   - ai-detection
@@ -65,6 +65,8 @@ These phrases are so strongly associated with AI that their presence alone sugge
 | Unlock potential | "Unlock your potential..." | Remove entirely |
 | Leverage (as verb) | "Leverage these insights..." | "Use" |
 | It's worth noting | "It's worth noting that..." | Just state the thing |
+| That matters because | "That matters because the protocols..." | Remove; the preceding sentence should carry its own weight, or restructure to lead with the reason |
+| This one matters a lot | "This one matters a lot for application teams." | Remove; if it matters, the content shows it — announcing it is the tell |
 | Moreover/Furthermore | "Moreover, this approach..." | Remove or use "Also" |
 | Today's digital landscape | "In today's digital landscape..." | Remove |
 | Cutting-edge | "Cutting-edge solutions..." | Remove |
@@ -176,10 +178,11 @@ Every sentence 10–15 words. Short. Punchy. Exhausting. Real writing has rhythm
 Before:
 > This isn't theoretical. It's practical.
 > It's not about X. It's about Y.
+> It's not only a security add-on. It's a foundational architectural element.
 
 After: Just state what it is.
 
-AI loves this rhetorical pattern. It sounds punchy but wastes words telling you what something isn't.
+AI loves this rhetorical pattern. It sounds punchy but wastes words telling you what something isn't. Variants: "not just X — it's Y", "not only X", "more than just X".
 
 ### Over-Balanced Sections
 

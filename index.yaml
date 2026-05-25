@@ -1,4 +1,4 @@
-generated: '2026-05-24'
+generated: '2026-05-25'
 skills:
 - name: senior-ui-ux
   category: design
@@ -225,7 +225,7 @@ skills:
   path: engineering/material-for-mkdocs
   description: Author and maintain Material for MkDocs sites — .pages nav, assets,
     frontmatter, Mermaid, admonitions, and Diátaxis structure.
-  version: 1.0.0
+  version: 1.0.1
   tags:
   - mkdocs
   - material
@@ -323,7 +323,7 @@ skills:
   path: tooling/antislop
   description: Detect and fix AI writing patterns (slop). 45+ patterns across 3 severity
     tiers with scoring and an editor mode that fixes problems directly.
-  version: 1.0.1
+  version: 1.0.2
   tags:
   - writing
   - ai-detection
@@ -369,4 +369,18 @@ skills:
   - extraction
   - consulting
   - knowledge
+  tool_agnostic: true
+- name: mkdocs-changelog
+  category: tooling
+  path: tooling/mkdocs-changelog
+  description: Analyse doc changes since the last CHANGELOG.md update and draft a
+    major-change entry if the changes qualify.
+  version: 1.0.0
+  specificity: context-specific
+  tags:
+  - documentation
+  - git
+  - changelog
+  - mkdocs
+  - confluence
   tool_agnostic: true
