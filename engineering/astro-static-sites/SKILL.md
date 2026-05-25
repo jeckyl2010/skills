@@ -262,6 +262,37 @@ Decision rules for a small static marketing site:
 
 Do not add hints speculatively. Each one is a real browser instruction — noise here hurts more than silence.
 
+## Resource hints for third-party fonts
+
+A single `preconnect` with `crossorigin` is not enough for a font CDN. The first request to the CDN is the CSS stylesheet — not a CORS request — so the browser opens a second non-CORS connection and the crossorigin preconnect sits idle until the font files arrive. Use three hints in this order:
+
+```html
+<link rel="dns-prefetch" href="//fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+```
+
+- dns-prefetch: fallback for browsers without preconnect support
+- preconnect without crossorigin: covers the CSS stylesheet request
+- preconnect with crossorigin: covers the actual woff2 font file requests
+
+PageSpeed will report "Unused preconnect — check crossorigin attribute" if you only have the crossorigin variant. Est. savings ~300ms LCP.
+
+## Font weight audit
+
+Each font weight is a separate woff2 file (~24 KiB each), all chained off a blocking CSS request. Audit actual usage before loading multiple weights. Dropping one unused weight saves ~25 KiB and one round trip. Check what Inter weights are actually applied in global.css before defaulting to 400,500,600,700.
+
+## GitHub Pages HTTP response headers
+
+GitHub Pages does not support custom HTTP response headers. Security headers (X-Frame-Options, X-Content-Type-Options, Content-Security-Policy) cannot be set from the repo. The only path is to proxy through Cloudflare (free tier):
+
+- Add domain to Cloudflare, update nameservers at registrar
+- Set proxy mode to orange-cloud (proxied) on DNS records
+- Add headers via Rules > Transform Rules > Modify Response Header
+- Set SSL/TLS encryption mode to Full (not Flexible — Flexible causes redirect loops with GitHub Pages)
+
+Cache TTL on Astro assets (default 10 minutes on GitHub Pages) also improves automatically with Cloudflare.
+
 ## Pitfalls
 
 - Page header bleed in flex section containers: if a section uses `display: flex; flex-direction: column; gap: Xrem`, the gap also applies between section-label, h1, and lead text. Fix: wrap the header group in a single `.page-header` div.
