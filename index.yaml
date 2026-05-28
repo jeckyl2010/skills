@@ -5,7 +5,7 @@ skills:
   path: design/comtech-ui-design
   description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk
     — reference before adding any new UI, copy, or page to the site.
-  version: 1.4.0
+  version: 1.5.0
   tags:
   - comtech
   - ui
@@ -307,7 +307,7 @@ skills:
   path: engineering/senior-software-development
   description: Apply senior-level engineering judgment to code review, implementation,
     debugging, refactoring, and delivery planning.
-  version: 1.2.2
+  version: 1.2.3
   specificity: generic
   tags:
   - code-review

@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "1.4.0"
+version: "1.5.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -97,6 +97,30 @@ Three buttons in the hero:
 3. Ask AI (btn-ghost-dark + btn-ai-summary) — utility, visually demoted via opacity
 
 Rule: utility or off-site actions are demoted visually (opacity), never by shrinking font or padding.
+
+## Button sizing and alignment rules
+
+These are baseline — apply to any button group on the site:
+
+- All buttons in a group share the same height and font-size via the `.btn` base class. Never override these per-button.
+- When buttons in a row have unequal label lengths, set `min-width` on the group so the shortest label doesn't look stubby. `9rem` works for the current hero trio.
+- Whenever `min-width` or `width` is set on a button, also set `text-align: center` and `justify-content: center` — otherwise text drifts left inside the padded box.
+- On mobile (column stack), use `align-items: stretch` on the container so all buttons fill the same width. Pair with `text-align: center; justify-content: center` on the buttons.
+
+```css
+/* Desktop: consistent minimum width, centered content */
+.hero-actions .btn {
+  min-width: 9rem;
+  text-align: center;
+  justify-content: center;
+}
+
+/* Mobile: full width, centered content */
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { text-align: center; justify-content: center; }
+}
+```
 
 ## Mobile button layout
 

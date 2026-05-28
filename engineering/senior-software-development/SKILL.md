@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.2.2"
+version: "1.2.3"
 specificity: generic
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability]
 tool_agnostic: true
@@ -85,6 +85,8 @@ In practice:
 - **Redundant computation at call sites.** When a function builds an expensive resource internally (a link map, a compiled schema, a resolved nav tree), consider returning it alongside the main result rather than discarding it. Callers that need it will otherwise rebuild it — sometimes multiple times in the same request. Pattern: change `-> Result` to `-> tuple[Result, ExpensiveArtifact]` and unpack at the call site. Check for redundant calls after any refactor that touches shared resources.
 - **GitHub Actions shell injection via `${{ inputs.* }}` in `run:` blocks.** Template substitution happens before the shell sees the script — never interpolate inputs directly into a command string. Bind to env vars, build a bash array, and drop `eval`. See `references/github-actions-security.md` for the safe pattern.
 - **Generic `.claude/commands/` names collide with built-in slash commands.** `/changelog`, `/test`, `/deploy` are reserved or commonly claimed. Always prefix with the tool identifier: `mk2conf-changelog.md` → `/mk2conf-changelog`. See `references/github-actions-security.md` for the full rule.
+- **multi-file patch(mode='patch') can silently skip files with no error.** The diff output only shows files that changed — a file that was targeted but skipped due to a context mismatch produces no warning. Always verify each target file with a content check (read_file) before reporting success. When in doubt, use mode='replace' with a unique old/new pair — it fails loudly if the match is not found.
+- **skill_view reads a cached snapshot, not disk.** After patching a skill file, skill_view may return the pre-patch state. Use read_file on the actual path (e.g. `~/.hermes/skills/engineering/<name>/SKILL.md`) to confirm the edit landed before acting on it.
 - Jumping to implementation before understanding the problem
 - Proposing a new pattern when an existing one already fits
 - Skipping error handling and edge cases in review
