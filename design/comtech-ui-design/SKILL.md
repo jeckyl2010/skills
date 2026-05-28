@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "1.5.0"
+version: "1.6.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -37,7 +37,7 @@ Reference this skill before adding any new UI, page section, copy, or component 
 | --text | #111112 |
 | --text-2 | #52525b |
 | --text-3 | #a1a1aa |
-| --radius | 8px |
+| --radius | 8px — base unit only; cards use calc(--radius * 1.5) = 12px |
 | --max-w | 1100px |
 | --nav-h | 64px |
 
