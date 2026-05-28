@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.0.7"
+version: "1.1.1"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -357,7 +357,9 @@ Repeat for each weight. Place @font-face blocks at the very top of global.css, b
 
 ### Font weight audit before downloading
 
-See `references/comtech-font-audit.md` for a worked example from comtechconsulting.dk.
+  - `references/comtech-font-audit.md` for a worked example from comtechconsulting.dk.
+- `references/llms-txt-template.md` — template for llms.txt on a personal consulting site.
+- `references/ai-summary-css.md` — full CSS block for the AI summary section and buttons.
 
 
 Before choosing which weights to download, scan the codebase for all `font-weight` declarations:
@@ -378,6 +380,111 @@ If staying on a third-party font CDN, the `crossorigin` preconnect must be paire
 
 A single `<link rel="preconnect" ... crossorigin />` is not sufficient — the non-CORS CSS request will open a second connection anyway.
 
+## AI discovery optimization
+
+Two complementary additions that improve how AI assistants (ChatGPT browsing, Gemini, Perplexity, Bing Copilot) understand and represent a site.
+
+### llms.txt
+
+A plain-text file at `/public/llms.txt` that AI crawlers with retrieval use directly. Structure it as:
+
+```
+# Brand — domain
+
+## Who
+One paragraph: who the person/company is, location, positioning.
+
+## What [brand] does
+Sub-sections per service area with plain-prose descriptions.
+
+## Industries / Clients
+
+## Selected recognition
+
+## What clients say
+2–3 short quotes with attribution.
+
+## Contact
+
+## Site structure
+- /path/ — one-line description per page
+```
+
+Keep it factual, scannable, no marketing fluff. This is machine-read first. See `references/llms-txt-template.md` for a worked example.
+
+Add a pointer in robots.txt (already standard to have sitemap there; llms.txt is self-discoverable via crawl).
+
+### AI summary section (deep-link buttons)
+
+A lean section placed between `<main>` and `<footer>` in Layout.astro — appears on every page. No backend, no API keys, pure static.
+
+Providers that support pre-populated prompts via query string (as of 2025):
+- ChatGPT: `https://chatgpt.com/?q=<encoded prompt>`
+- Google AI Mode: `https://www.google.com/search?q=<encoded prompt>&udm=50`
+
+Both have web search enabled by default. Skip Claude — it does not browse by default, so accuracy suffers. Skip Gemini (`gemini.google.com/app?q=`) — the query string is silently dropped in practice; the prompt does not pre-populate. Google AI Mode is the clean Google-ecosystem alternative: standard search URL, reliable injection, opens in a browser tab.
+
+Prompt pattern — ask for structure explicitly:
+> "Based on https://domain.com, give me a structured overview of [Brand]. Use clear headings for: Who [Full Name] is, Services offered, Industries served, Recognition and credentials, and How to get in touch."
+
+Explicit URL gives browsing AIs a direct target. Full name adds a personal search hook. **Asking for headings matters** — an open-ended prompt produces a prose blob. Naming each section in the prompt produces formatted output with those exact headings in both ChatGPT and Google AI Mode.
+
+**Placement: hero CTA button is the primary entry point.** A footer row is too easy to miss — visitors who would actually use it are gone before they reach it. The right treatment is a third button in the hero actions row: ChatGPT logo inline SVG + label, same ghost-dark style as secondary CTAs. This keeps it discoverable without making AI the headline feature.
+
+A footer row (quiet secondary row with hairline border-top, muted link text) is optional and worth adding if you want the action on every page. But if you have to choose one, choose the hero button. A standalone `<section>` between `<main>` and `<footer>` looks bolted on — avoid it entirely.
+
+**Button label: "Ask AI" over "AI Summary".** "Summary" implies a result delivered on the page; the button actually hands the visitor off to ChatGPT. "Ask AI" is verb-led, honest about what it does, and shorter. If the footer row is present alongside the hero button, "Ask AI" also reads more naturally in a footer context than "AI Summary".
+
+```astro
+<a
+  href={`https://chatgpt.com/?q=${encodeURIComponent('...')}`}
+  target="_blank" rel="noopener noreferrer"
+  class="btn btn-ghost-dark btn-ai-summary"
+  aria-label="Get an AI summary via ChatGPT"
+>
+  <svg class="btn-ai-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+       xmlns="http://www.w3.org/2000/svg">
+    <!-- ChatGPT logo path — see references/ai-summary-css.md -->
+  </svg>
+  AI Summary
+</a>
+```
+
+CSS for the icon-text button:
+```css
+.btn-ai-summary { display: inline-flex; align-items: center; gap: 0.4em; opacity: 0.6; }
+.btn-ai-summary:hover { opacity: 1; }
+.btn-ai-icon    { width: 1em; height: 1em; flex-shrink: 0; }
+```
+
+**Demoting a tertiary button visually: use opacity alone, not font-size.** Reducing `font-size` on one button in a row breaks vertical alignment and makes the button look broken rather than subordinate. `opacity: 0.6` with `opacity: 1` on hover achieves the same hierarchy signal without disrupting the row's geometry. The button inherits the same size, padding, and border as its siblings — only the weight of presence differs.
+
+The full ChatGPT SVG path is in `references/ai-summary-css.md`.
+
+Footer row pattern in Layout.astro (inside `<footer>`, below the main footer content):
+
+```astro
+<div class="footer-ai">
+  <span class="footer-ai-label">Ask an AI about COM&lt;tech&gt;</span>
+  <div class="footer-ai-links">
+    <a
+      href={`https://chatgpt.com/?q=${encodeURIComponent('...')}`}
+      target="_blank" rel="noopener noreferrer"
+      class="footer-ai-link"
+    >ChatGPT</a>
+    <span class="footer-ai-sep" aria-hidden="true">·</span>
+    <a
+      href={`https://www.google.com/search?q=${encodeURIComponent('...')}&udm=50`}
+      target="_blank" rel="noopener noreferrer"
+      class="footer-ai-link"
+    >Google AI</a>
+  </div>
+</div>
+```
+
+CSS: small uppercase label left, links right, same muted text color as `footer-email`. Use `var(--dark-text-3)` for label and separator, `var(--dark-text-2)` for links, `var(--dark-text)` on hover. Border-top to visually separate from main footer row. See `references/ai-summary-css.md` for the full CSS block.
+
+
 ## Pitfalls
 
 - Page header bleed in flex section containers: if a section uses `display: flex; flex-direction: column; gap: Xrem`, the gap also applies between section-label, h1, and lead text. Fix: wrap the header group in a single `.page-header` div.
@@ -388,4 +495,6 @@ A single `<link rel="preconnect" ... crossorigin />` is not sufficient — the n
 - `og:image` must be an absolute URL. Use `new URL(ogImage, Astro.site)` — not string concatenation.
 - `og:site_name` is easy to miss. If the brand name contains `<` or `>`, use HTML entities (`COM&lt;tech&gt;`).
 - ViewTransitions replaces the head on page navigation; confirm meta tags are in the persistent layout, not page-level slots.
-- **patch mode corruption in .astro files**: `mode=patch` (V4A format) is unreliable in `.astro` files — the diff tool can leak git diff headers (`+++ b/src/pages/about.astro`) verbatim into the file content, corrupting both frontmatter data arrays and template markup. This has triggered twice in practice: once editing a JS data array in the frontmatter block, once editing a `.map()` render section in the template. Recovery is always a `mode=replace` with a clean old/new pair that includes the corrupted diff-header text. Prevention: always use `mode=replace` for `.astro` files. The only exception where `mode=patch` is safe is small, isolated CSS additions in `<style>` blocks at the bottom of the file, where context lines are stable and the edit is additive-only.
+- **macOS app URL interception overrides `target="_blank"`.** When a user has a desktop app installed (ChatGPT, Spotify, Slack), macOS registers it as the OS-level URL handler for that domain. Even with `target="_blank"`, clicking a link to `chatgpt.com` opens the app, not a browser tab. This is OS behaviour — there is nothing to fix in the HTML. Visitors without the app installed get a browser tab as expected. Do not add workarounds; mention it as expected behaviour if the user raises it.
+- **Orphaned CSS after markup refactor causes invisible elements on dark backgrounds.** When a layout section is moved or replaced, its CSS class names often disappear silently — the markup renders but elements are unstyled. On a dark background (`var(--dark-bg)`), unstyled links and text become invisible with no error. After any structural refactor, search `global.css` for the new class names to confirm styles exist before assuming the feature is working. The symptom is "I don't see the buttons" with a clean build.
+- patch mode corruption in .astro files: `mode=patch` (V4A format) is unreliable in `.astro` files — the diff tool can leak git diff headers (`+++ b/src/pages/about.astro`) verbatim into the file content, corrupting both frontmatter data arrays and template markup. This has triggered twice in practice: once editing a JS data array in the frontmatter block, once editing a `.map()` render section in the template. Recovery is always a `mode=replace` with a clean old/new pair that includes the corrupted diff-header text. Prevention: always use `mode=replace` for `.astro` files. The only exception where `mode=patch` is safe is small, isolated CSS additions in `<style>` blocks at the bottom of the file, where context lines are stable and the edit is additive-only.

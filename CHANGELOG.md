@@ -10,6 +10,7 @@ Format: `## [version] — dd.MM.yyyy`
 
 ### Added
 - `tooling/antislop`: new skill — detect and fix AI writing patterns (slop), 45+ patterns across 3 severity tiers, scoring system, editor mode
+- `design/comtech-ui-design`: new skill — design system, visual language, tone, and UI conventions for comtechconsulting.dk
 
 ### Changed
 - `engineering/material-for-mkdocs`: trimmed description to pass 150-char validator limit

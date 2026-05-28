@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.2.0"
+version: "1.2.2"
 specificity: generic
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability]
 tool_agnostic: true
@@ -76,7 +76,15 @@ In practice:
 - No unused imports, unused variables, unused constants.
 - If you touch a file, leave it cleaner than you found it.
 
-## Pitfalls to avoid
+## Pitfalls
+
+- Image generation via delegate_task (image_gen toolset) can return a false-positive "Saved to /path/file.png" when the file was never written. Always verify with a stat/ls check before referencing the path to the user. If missing, fall back to generating the image directly via execute_code + PIL (pillow). to avoid
+- **Recommending creation of something that already exists.** Before suggesting the user create a GitHub Action, a config file, an abstraction, or any artifact — scan the repo first. `action.yml` present at the root means the Action is already there. "Inspect existing patterns" (Default lens step 2) applies to existence checks, not just style choices.
+- **Transform pipeline short-circuits when required context is not threaded through.** A function that runs a transform (e.g. internal link resolution) silently produces wrong output when its required context (link map, config, nav tree) is missing — it runs, finds nothing, and produces a degraded result with no error. Pattern: search for every call site of the affected function and verify the context parameter is present at each one. When a publisher or compiler function is extracted from the main pipeline, explicitly check that all transform inputs travel with it — they will not automatically follow.
+- **Synthetic nav/IR nodes built from path strings need humanised titles.** When constructing a synthetic node from a folder path or slug (e.g. `find_section_by_folder`), never pass the raw path string as the title. Apply `.replace("-", " ").replace("_", " ").title()` as the fallback, and prefer an explicit title from the resolved nav if one exists. Raw slugs as titles propagate visibly into Confluence page titles and headings.
+- **Redundant computation at call sites.** When a function builds an expensive resource internally (a link map, a compiled schema, a resolved nav tree), consider returning it alongside the main result rather than discarding it. Callers that need it will otherwise rebuild it — sometimes multiple times in the same request. Pattern: change `-> Result` to `-> tuple[Result, ExpensiveArtifact]` and unpack at the call site. Check for redundant calls after any refactor that touches shared resources.
+- **GitHub Actions shell injection via `${{ inputs.* }}` in `run:` blocks.** Template substitution happens before the shell sees the script — never interpolate inputs directly into a command string. Bind to env vars, build a bash array, and drop `eval`. See `references/github-actions-security.md` for the safe pattern.
+- **Generic `.claude/commands/` names collide with built-in slash commands.** `/changelog`, `/test`, `/deploy` are reserved or commonly claimed. Always prefix with the tool identifier: `mk2conf-changelog.md` → `/mk2conf-changelog`. See `references/github-actions-security.md` for the full rule.
 - Jumping to implementation before understanding the problem
 - Proposing a new pattern when an existing one already fits
 - Skipping error handling and edge cases in review
@@ -97,3 +105,4 @@ Load the relevant reference(s) for the current task. The principles above apply 
 | `references/vscode-bun.md` | VS Code tasks for a Bun workspace |
 | `references/framework-migration-cleanup.md` | Post-migration cleanup of old framework artifacts |
 | `references/github-pages-publish-verification.md` | Publishing a static site to GitHub Pages |
+| `references/github-actions-security.md` | GitHub Actions shell injection fix (env vars + bash array, no eval) and slash command namespacing |

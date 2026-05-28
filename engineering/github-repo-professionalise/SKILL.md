@@ -1,7 +1,7 @@
 ---
 name: github-repo-professionalise
 description: Bring a GitHub repo to professional standard — CI, security tooling, community health files, badges, Dependabot, CodeQL, and Scorecard.
-version: "1.4.1"
+version: "1.4.3"
 tags: [github, ci, quality-gates, security, badges, dependabot, codeql, scorecard, codecov, pre-commit, community-health, typescript, python, bun, uv]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -332,6 +332,27 @@ Before the first commit, verify:
 **CHANGELOG.md is easy to forget.** Every professionalisation run touches multiple files. Add the CHANGELOG update to the commit checklist explicitly — it will be missed otherwise.
 
 **`git push` rejected when sync-skills ran in the same session.** `sync-skills push` commits and pushes to the remote. If you then commit locally and push, the push is rejected. Always `git pull --rebase && git push`.
+
+**Shell injection in composite Action `run:` blocks.** `${{ inputs.* }}` in a `run:` block is template substitution that happens *before* the shell sees the script — any input value containing shell metacharacters executes arbitrary code. Fix pattern: assign all inputs to env vars in the step's `env:` block, build args as a bash array, drop `eval`.
+
+```yaml
+# WRONG — ${{ inputs.section }} is substituted verbatim before the shell sees it
+run: |
+  ARGS="--section '${{ inputs.section }}'"
+  eval mk2conf publish $ARGS
+
+# CORRECT — inputs never touch the shell script directly
+env:
+  INPUT_SECTION: ${{ inputs.section }}
+run: |
+  ARGS=()
+  [[ -n "$INPUT_SECTION" ]] && ARGS+=(--section "$INPUT_SECTION")
+  mk2conf publish "${ARGS[@]}"
+```
+
+Apply this pattern to every composite Action that builds shell commands from inputs. GitHub Marketplace reviewers flag `eval` with interpolated inputs — fix before submission.
+
+**`.claude/commands/` filename collides with built-in slash commands.** When shipping an AI skill that users install into `.claude/commands/`, a generic name like `changelog.md` becomes `/changelog` — which clashes with built-in commands in tools like Copilot CLI. Always use a namespaced filename: `<tool>-<skill>.md` (e.g. `mk2conf-changelog.md` → `/mk2conf-changelog`). Apply the same prefix discipline to Cursor `.mdc` files and Copilot `.instructions.md` files for consistency. Update docs and the invocation example (e.g. `/changelog` → `/mk2conf-changelog`) in the same commit.
 
 **`raw.githubusercontent.com` CDN lag.** After a successful `git push`, the raw file URL may serve a stale version for 1–5 minutes. This is Fastly edge cache — browser cache clears do not help. If a user reports "the change isn't showing", confirm the push landed (`git log origin/main`) and wait. Do not re-push or re-patch based on CDN lag alone.
 

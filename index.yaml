@@ -1,11 +1,24 @@
-generated: '2026-05-26'
+generated: '2026-05-28'
 skills:
+- name: comtech-ui-design
+  category: design
+  path: design/comtech-ui-design
+  description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk
+    — reference before adding any new UI, copy, or page to the site.
+  version: 1.0.0
+  tags:
+  - comtech
+  - ui
+  - design-system
+  - astro
+  - brand
+  tool_agnostic: true
 - name: senior-ui-ux
   category: design
   path: design/senior-ui-ux
   description: Apply senior UI/UX judgment to interfaces, user flows, interaction
     details, and product usability decisions.
-  version: 1.0.1
+  version: 1.0.2
   tags:
   - ux
   - ui
@@ -49,7 +62,7 @@ skills:
   path: engineering/astro-static-sites
   description: Build, review, and extend Astro static sites — config, integrations,
     SEO, deployment to GitHub Pages.
-  version: 1.0.7
+  version: 1.1.1
   tags:
   - astro
   - static-site
@@ -97,6 +110,34 @@ skills:
   - assessment
   - design
   - maintainability
+  tool_agnostic: true
+- name: confluence-ai-assistant
+  category: engineering
+  path: engineering/confluence-ai-assistant
+  description: Advise on Confluence Cloud AI — Atlassian Intelligence, Rovo Chat,
+    Rovo Chat macro, plan tier detection, and space-level AI scoping.
+  version: 1.0.0
+  tags:
+  - confluence
+  - atlassian
+  - rovo
+  - ai
+  - rag
+  - knowledge-management
+  tool_agnostic: true
+- name: confluence-rovo-ai
+  category: engineering
+  path: engineering/confluence-rovo-ai
+  description: Configure and surface Rovo AI features in Confluence Cloud — Chat,
+    custom Agents, Space Agent assignment, and space homepage CTA patterns.
+  version: 1.0.0
+  tags:
+  - confluence
+  - rovo
+  - atlassian
+  - ai
+  - documentation
+  - rag
   tool_agnostic: true
 - name: consulting-deliverable
   category: engineering
@@ -146,7 +187,7 @@ skills:
   path: engineering/github-repo-professionalise
   description: Bring a GitHub repo to professional standard — CI, security tooling,
     community health files, badges, Dependabot, CodeQL, and Scorecard.
-  version: 1.4.1
+  version: 1.4.3
   tags:
   - github
   - ci
@@ -266,7 +307,7 @@ skills:
   path: engineering/senior-software-development
   description: Apply senior-level engineering judgment to code review, implementation,
     debugging, refactoring, and delivery planning.
-  version: 1.2.0
+  version: 1.2.2
   specificity: generic
   tags:
   - code-review
@@ -275,6 +316,19 @@ skills:
   - testing
   - implementation
   - maintainability
+  tool_agnostic: true
+- name: slidev-presentations
+  category: engineering
+  path: engineering/slidev-presentations
+  description: Author, review, and fix Slidev presentations — visual inspection, design
+    consistency, frontmatter hygiene, Carbon icons, rewrite vs patch decisions.
+  version: 1.0.0
+  tags:
+  - slidev
+  - presentations
+  - markdown
+  - ux
+  - carbon-icons
   tool_agnostic: true
 - name: static-site-seo-and-og
   category: engineering
@@ -375,8 +429,7 @@ skills:
   path: tooling/mkdocs-changelog
   description: Analyse doc changes since the last CHANGELOG.md update and draft a
     major-change entry if the changes qualify.
-  version: 1.0.0
-  specificity: context-specific
+  version: 1.4.1
   tags:
   - documentation
   - git

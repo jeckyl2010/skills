@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.0.1"
+version: "1.0.2"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -97,6 +97,7 @@ When working on consultancy, portfolio, or other trust-led marketing pages:
 - Treat metaphor and motif language as a limited budget. One or two related lines add recall; repeating across multiple pages starts to feel self-conscious.
 - If a line feels showy, salesy, or performing for attention, dial it back until it reads like quiet confidence.
 - For cautious professional-services buyers, a CTA frame like "When to reach out" can work better than generic invitation copy.
+- On a one-person consultancy, keep the founder's name in secondary CTAs ("Contact Anders", not just "Contact"). The name is a differentiator — it signals a real person, not a form routed to a team. Generic CTA labels erode this. Only shorten if the button is in a context where the name is already visually present directly above it.
 - To express that a consultant "listens" without stating it: use specificity of problem description. Name the frustrations clients actually have. Precise, recognisable pain points read as earned experience. Vague positioning reads as defensive.
 - Distinguish "good practices" from "best practices" in copy. "Best practice" ends thinking. "Good practice" keeps judgment alive. This signals seniority and independence from methodology sales.
 - When rewriting a strength/value card that currently states what you don't do, rewrite it to state what you actually do and why. Negative framing is weaker than affirmative framing.
