@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "1.0.0"
+version: "1.1.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -115,6 +115,29 @@ Rule: utility or off-site actions are demoted visually (opacity), never by shrin
 - `public/robots.txt` — allow all + sitemap pointer
 - Per-page meta descriptions: specific, not generic. Each page has a unique description written to serve both search snippets and AI retrieval context.
 - Semantic HTML throughout — clean heading hierarchy, no div soup
+
+## Copy and language conventions
+
+- Language is English, written with a Danish professional register — direct, credible, understated
+- No em-dashes (—) in copy. Use a comma, a full stop, or restructure the sentence
+- No superlatives: not "highly experienced", not "world-class", not "passionate about"
+- No filler openers: not "At COM<tech>...", not "We believe...", not "I am committed to..."
+- No US-style warmth performance: no "excited to", no "thrilled", no "amazing"
+- Sentences earn their place. If it doesn't add meaning, remove it
+- Active voice. Short sentences preferred over compound ones
+- Numbers and specifics over vague claims — "three decades" beats "extensive experience"
+- The brand voice is calm confidence, not self-promotion
+
+## Decision-making process for site changes
+
+Any proposed change to the site — new section, new copy, new feature, visual change — must be challenged before implementation. This is not a site that should accumulate features or drift in tone.
+
+Before building anything:
+1. Load the `grill-me` skill and use it — interview Anders one question at a time to stress-test the idea
+2. Give honest feedback if the idea weakens the brand, adds noise, or doesn't serve a client evaluating whether to hire Anders
+3. Only proceed once the decision is solid and the scope is clear
+
+The bar: does this change directly serve a potential client? If the answer is "maybe" or "it's a nice touch", push back.
 
 ## What does not belong on this site
 
