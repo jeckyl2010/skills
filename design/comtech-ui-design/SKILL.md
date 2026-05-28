@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "1.6.0"
+version: "1.7.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -121,6 +121,31 @@ These are baseline — apply to any button group on the site:
   .hero-actions .btn { text-align: center; justify-content: center; }
 }
 ```
+
+## Card icon-to-title spacing
+
+When a card has an icon above a title, do NOT tighten the outer card `gap` — that also compresses body copy and tag spacing. Instead, wrap icon and title in a header element with its own smaller gap:
+
+```html
+<div class="svc-header">
+  <div class="svc-icon" ... />
+  <h3 class="svc-title">...</h3>
+</div>
+```
+
+```css
+.svc-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+```
+
+The outer card `gap: 1rem` stays intact. Only the icon-to-title distance tightens.
+
+### When NOT to put icon and title on the same line
+
+If titles vary significantly in length across cards, inline icon + title will wrap inconsistently — the icon sits next to only the first line of a multi-line title on longer entries. Stacked layout with a tight gap is the correct solution. Only put icon inline with title when all titles are reliably short (one line at all viewport widths).
 
 ## Mobile button layout
 
