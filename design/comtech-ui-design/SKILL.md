@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.5.0"
+version: "2.5.1"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -160,6 +160,8 @@ Bar: does this directly serve a potential client? "Maybe" or "nice touch" means 
 See `astro-static-sites` skill for the canonical `critique.js` template and the IntersectionObserver pitfall.
 
 ## Known structural issues to check on every review
+
+**Mobile nav active-state bleed:** On mobile, the `aria-current="page"` background (`--accent-dim`) bleeds into the adjacent menu item because `.nav-links a` is not `display: block` inside the flex column. Fix: add `display: block` to both `.nav-links li` and `.nav-links a` in the mobile media query, and set vertical padding to at least `0.875rem` so the border-radius can't visually bridge to the next item. Without `display: block`, the inline/flex anchor's background box is unconstrained and the rounded rect merges with the row below.
 
 **Nav z-index / scroll-offset overlap:** The sticky nav overlaps content mid-page across multiple pages. Section anchors do not compensate for `--nav-h` (64px). Check that `scroll-margin-top: var(--nav-h)` is set on all scrollable sections.
 
