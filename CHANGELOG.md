@@ -13,6 +13,7 @@ Format: `## [version] — dd.MM.yyyy`
 - `design/comtech-ui-design`: new skill — design system, visual language, tone, and UI conventions for comtechconsulting.dk
 
 ### Changed
+- `design/comtech-ui-design` v1.4.0: deduplicate mobile button section, add missing "What does not belong" heading, clean copy anti-patterns list
 - `design/comtech-ui-design` v1.1.0: added copy/language conventions (Danish register, no em-dashes, no US warmth) and decision-making process (grill-me before building)
 - `engineering/material-for-mkdocs`: trimmed description to pass 150-char validator limit
 

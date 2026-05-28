@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "1.3.0"
+version: "1.4.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -96,7 +96,20 @@ Three buttons in the hero:
 2. Contact Anders (btn-ghost-dark) — secondary conversion, full name intentional
 3. Ask AI (btn-ghost-dark + btn-ai-summary) — utility, visually demoted via opacity
 
-Rule: utility or off-site actions are demoted visually (opacity), never by shrinking font or padding. Tested and confirmed — reducing font-size on a sibling button makes it read as an afterthought rather than a quiet option. Opacity alone is sufficient and correct.
+Rule: utility or off-site actions are demoted visually (opacity), never by shrinking font or padding.
+
+## Mobile button layout
+
+On narrow viewports (max-width: 480px), hero action buttons must stack vertically at equal full width:
+
+```css
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { text-align: center; justify-content: center; }
+}
+```
+
+Do not use `align-items: flex-start` — it lets buttons take their natural (unequal) widths and looks broken. Tested and confirmed — reducing font-size on a sibling button makes it read as an afterthought rather than a quiet option. Opacity alone is sufficient and correct.
 
 ## Ask AI feature
 
@@ -139,27 +152,16 @@ Before building anything:
 
 The bar: does this change directly serve a potential client? If the answer is "maybe" or "it's a nice touch", push back.
 
-## Mobile button layout
-
-When buttons stack vertically on mobile, use `align-items: stretch` on the flex column container and `text-align: center; justify-content: center` on each button. Do NOT use `align-items: flex-start` — it causes unequal widths that look broken when buttons have different label lengths.
-
-```css
-@media (max-width: 480px) {
-  .hero-actions { flex-direction: column; align-items: stretch; }
-  .hero-actions .btn { text-align: center; justify-content: center; }
-}
-```
-
 ## Copy anti-patterns found in the wild
 
-These passed initial review but were caught on audit — add them to the conventions checklist:
+These passed initial review but were caught on audit — apply the conventions checklist to all copy including data arrays and component props, not just prose blocks:
 
 - "feel free to reach out" — US softener, removes directness. Replace with the action: "write", "send a message", or restructure
 - "That is fine." as reassurance opener — patronising, assumes anxiety the visitor did not express. Cut it
 - "available inline below" — redundant when the thing is visually below. Cut the whole clause
-- Em-dash (—) in running body copy — found in about.astro strengths card. The convention (comma or full stop) must be applied to all copy including data arrays and component props, not just prose blocks
+- Em-dash (—) in running body copy — use a comma or full stop instead
 
-
+## What does not belong on this site
 
 - Personal GitHub projects
 - Advertorial content
