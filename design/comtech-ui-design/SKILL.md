@@ -142,6 +142,8 @@ Bar: does this directly serve a potential client? "Maybe" or "nice touch" means 
 3. Report as FAIL / ADVISORY / PASS. State which rule each FAIL violates.
 4. Apply all fixes in one agreed pass. Rebuild and confirm clean before done.
 
+**Stage, don't ship.** When the user has not explicitly asked for deployment, apply all changes to a local working branch and run `critique:fast` to show rendered screenshots for verification. Only push to `main` after explicit user sign-off. This is the default workflow — not an exception.
+
 See `astro-static-sites` skill for the canonical `critique.js` template and the IntersectionObserver pitfall.
 
 ## Known structural issues to check on every review
@@ -155,6 +157,8 @@ See `astro-static-sites` skill for the canonical `critique.js` template and the 
 **Testimonials page:** Only one card format should be used — the expanded card (italic quote, bold name, role below, "Read full recommendation +" link). Multiple competing formats read as errors. Duplicate testimonials across format variants must be removed.
 
 **Card height consistency:** Two-column card rows need equal heights. Enforce with `align-items: stretch` on the grid container and `height: 100%` on cards if needed. Do not rely on copy length to balance heights naturally.
+
+**Page-lead width:** `.page-lead` max-width is 68ch — not 52ch. Narrower values create an asymmetric gap between the intro paragraph and the full-width layout below it. Also set `margin-bottom: 2rem` so page headers breathe before grid content starts.
 
 **Single testimonial section:** If only one quote is shown, ensure it earns the canvas — strong quote, credible attribution, appropriate label. "CLIENT PERSPECTIVE" (singular) reads oddly; prefer "What clients say" or omit the section label.
 

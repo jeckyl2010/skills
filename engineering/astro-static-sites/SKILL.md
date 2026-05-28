@@ -501,23 +501,27 @@ After capture, load each screenshot via vision_analyze and ask for a strict UX/U
 
 Astro sites commonly use `.fade-up` animations gated on `.js` class and triggered via IntersectionObserver. Headless Playwright never scrolls, so the observer never fires — content stays at `opacity: 0` and screenshots show blank voids where sections should be.
 
-**Fix:** Before taking screenshots, run a scroll simulation inside `page.evaluate()`:
+**Fix:** Before taking screenshots, run a scroll simulation inside `page.evaluate()`. Use at least 20 steps and 120ms per step — 10 steps at 80ms is not enough for deep pages with many sections (e.g. about pages with 6+ sections below fold).
 
 ```js
 await page.evaluate(async () => {
   const delay = (ms) => new Promise(r => setTimeout(r, ms));
   const scrollHeight = document.body.scrollHeight;
-  const step = Math.ceil(scrollHeight / 10);
+  const step = Math.ceil(scrollHeight / 20);
   for (let y = 0; y <= scrollHeight; y += step) {
     window.scrollTo(0, y);
-    await delay(80);
+    await delay(120);
   }
+  // Pause at the bottom to ensure deep sections are fully revealed
+  await delay(300);
   window.scrollTo(0, 0);
-  await delay(200);
+  await delay(500);
 });
+// Extra settle time after returning to top
+await page.waitForTimeout(400);
 ```
 
-This triggers all IntersectionObserver callbacks, then resets to top so fold captures are correct.
+This triggers all IntersectionObserver callbacks, then resets to top so fold captures are correct. The pause at the bottom matters — IntersectionObserver callbacks are async and the 120ms per step alone is not sufficient for sections at the very end of a long page.
 
 ---
 
