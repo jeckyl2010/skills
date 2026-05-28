@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.4.0"
+version: "2.5.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -112,6 +112,7 @@ One rule, applied consistently everywhere: `1px solid var(--border)` (`#e4e4e7`)
 - Use `.section-alt` for alternating background sections — it applies the border-top automatically.
 - Use `.cta-strip` border-top for the page-bottom CTA strip — already set in global.css.
 - Never add inline `style="border-top: ..."` on individual sections — put it in a class.
+- Never add inline `style="background: ..."` to vary section backgrounds — use `.section-alt` or a named modifier class.
 - Never create bespoke border widths (2px, 3px) for specific areas. Visual hierarchy comes from layout and spacing, not from varying border weights.
 - The hairline is intentionally low-contrast. It reads as a zone marker at normal viewing distance. If it's invisible at screenshot scale, that's correct — it's not a bold divider.
 
@@ -149,7 +150,7 @@ Bar: does this directly serve a potential client? "Maybe" or "nice touch" means 
 
 ## How to run a site review
 
-1. Run `npm run critique` (or `critique:fast` to skip build). This captures 20 screenshots: every page × desktop + mobile × fold + full. The scroll simulation ensures all IntersectionObserver animations fire before capture.
+1. Run `npm run critique` (or `critique:fast` to skip build). This captures 20 screenshots: every page × desktop + mobile × fold + full. The scroll simulation (20 steps, 120ms each, pause at bottom, 900ms settle before capture) ensures all IntersectionObserver animations fire. If deep sections appear blank, the scroll step count or delay may need increasing.
 2. Load each screenshot via vision_analyze with a specific critique question referencing the brand.
 3. Report as FAIL / ADVISORY / PASS. State which rule each FAIL violates.
 4. Apply all fixes in one agreed pass. Rebuild and confirm clean before done.
