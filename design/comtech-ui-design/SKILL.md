@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.5.1"
+version: "2.6.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -158,6 +158,19 @@ Bar: does this directly serve a potential client? "Maybe" or "nice touch" means 
 **Stage, don't ship.** When the user has not explicitly asked for deployment, apply all changes to a local working branch and run `critique:fast` to show rendered screenshots for verification. Only push to `main` after explicit user sign-off. This is the default workflow — not an exception.
 
 See `astro-static-sites` skill for the canonical `critique.js` template and the IntersectionObserver pitfall.
+
+See `references/nav-mobile-pitfalls.md` for known mobile nav rendering issues and their fixes.
+
+## Mobile nav active state bleed (known pitfall)
+
+The `.nav-links a[aria-current="page"]` rule applies a background fill with `border-radius`. In the mobile dropdown, `<a>` elements are inline by default — their background box is not constrained to the row height, and with `gap: 0.25rem` the rounded fill visually bleeds into the adjacent item, making it look like two items are selected.
+
+Fix (both lines required):
+```css
+.nav-links li { display: block; }
+.nav-links a { display: block; padding: 0.875rem 1rem; }
+```
+`display: block` on both `<li>` and `<a>` fully contains the background to the row. Vertical padding of `0.875rem` gives the border-radius enough clearance from the item below. Do not go below `0.75rem` — the bleed reappears.
 
 ## Known structural issues to check on every review
 
