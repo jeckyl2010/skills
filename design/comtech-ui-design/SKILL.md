@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.0.0"
+version: "2.1.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -137,7 +137,25 @@ Bar: does this directly serve a potential client? "Maybe" or "nice touch" means 
 
 ## How to run a site review
 
-1. Read every page in `src/pages/*.astro` in full — including data arrays, bento cards, CTA copy, and props.
-2. Screenshot hero at desktop and mobile before filing findings.
+1. Run `npm run critique` (or `critique:fast` to skip build). This captures 20 screenshots: every page × desktop + mobile × fold + full. The scroll simulation ensures all IntersectionObserver animations fire before capture.
+2. Load each screenshot via vision_analyze with a specific critique question referencing the brand.
 3. Report as FAIL / ADVISORY / PASS. State which rule each FAIL violates.
 4. Apply all fixes in one agreed pass. Rebuild and confirm clean before done.
+
+See `astro-static-sites` skill for the canonical `critique.js` template and the IntersectionObserver pitfall.
+
+## Known structural issues to check on every review
+
+**Nav z-index / scroll-offset overlap:** The sticky nav overlaps content mid-page across multiple pages. Section anchors do not compensate for `--nav-h` (64px). Check that `scroll-margin-top: var(--nav-h)` is set on all scrollable sections.
+
+**Contact page interactivity:** Email and LinkedIn entries must be real links — `mailto:` and `href` respectively. Plain text is a functional failure on a contact page. Add a visible CTA button ("Send an email →") with the mailto href.
+
+**About page:** Always verify a CTA strip exists below the last content section. Removing it leaves a dead whitespace void before the footer.
+
+**Testimonials page:** Only one card format should be used — the expanded card (italic quote, bold name, role below, "Read full recommendation +" link). Multiple competing formats read as errors. Duplicate testimonials across format variants must be removed.
+
+**Card height consistency:** Two-column card rows need equal heights. Enforce with `align-items: stretch` on the grid container and `height: 100%` on cards if needed. Do not rely on copy length to balance heights naturally.
+
+**Single testimonial section:** If only one quote is shown, ensure it earns the canvas — strong quote, credible attribution, appropriate label. "CLIENT PERSPECTIVE" (singular) reads oddly; prefer "What clients say" or omit the section label.
+
+**CTA strip visual differentiation:** When a testimonial section and a CTA strip appear on the same light background, they merge into one block. Differentiate with a subtle top border, a tint change, or tighter padding to mark the zone break.

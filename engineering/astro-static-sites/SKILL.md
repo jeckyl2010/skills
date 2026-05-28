@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.1.1"
+version: "1.1.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -484,6 +484,42 @@ Footer row pattern in Layout.astro (inside `<footer>`, below the main footer con
 
 CSS: small uppercase label left, links right, same muted text color as `footer-email`. Use `var(--dark-text-3)` for label and separator, `var(--dark-text-2)` for links, `var(--dark-text)` on hover. Border-top to visually separate from main footer row. See `references/ai-summary-css.md` for the full CSS block.
 
+
+## Visual Review & Critique
+
+The site ships a `scripts/critique.js` Playwright script that captures every page at desktop (1440×900) and mobile (390×844) viewports — both above-the-fold and full-page — then writes a manifest at `screenshots/critique/manifest.json`.
+
+Run it:
+```
+npm run critique        # full build + capture
+npm run critique:fast   # skip build, use existing dist/
+```
+
+After capture, load each screenshot via vision_analyze and ask for a strict UX/UI critique against the brand's design system. See `templates/critique.js` for the canonical script.
+
+### Pitfall: IntersectionObserver / fade-up animations invisible in headless Playwright
+
+Astro sites commonly use `.fade-up` animations gated on `.js` class and triggered via IntersectionObserver. Headless Playwright never scrolls, so the observer never fires — content stays at `opacity: 0` and screenshots show blank voids where sections should be.
+
+**Fix:** Before taking screenshots, run a scroll simulation inside `page.evaluate()`:
+
+```js
+await page.evaluate(async () => {
+  const delay = (ms) => new Promise(r => setTimeout(r, ms));
+  const scrollHeight = document.body.scrollHeight;
+  const step = Math.ceil(scrollHeight / 10);
+  for (let y = 0; y <= scrollHeight; y += step) {
+    window.scrollTo(0, y);
+    await delay(80);
+  }
+  window.scrollTo(0, 0);
+  await delay(200);
+});
+```
+
+This triggers all IntersectionObserver callbacks, then resets to top so fold captures are correct.
+
+---
 
 ## Pitfalls
 
