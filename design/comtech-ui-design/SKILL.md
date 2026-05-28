@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.3.0"
+version: "2.4.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -105,6 +105,18 @@ Three tiers, all sharing the same `.btn` base — identical height, padding (0.6
 - Per-page meta descriptions: specific and unique on every page.
 - Semantic HTML throughout — clean heading hierarchy, no div soup.
 
+## Section separation
+
+One rule, applied consistently everywhere: `1px solid var(--border)` (`#e4e4e7`). This is already the value on nav, footer, `.cta-strip`, and `.section-alt`.
+
+- Use `.section-alt` for alternating background sections — it applies the border-top automatically.
+- Use `.cta-strip` border-top for the page-bottom CTA strip — already set in global.css.
+- Never add inline `style="border-top: ..."` on individual sections — put it in a class.
+- Never create bespoke border widths (2px, 3px) for specific areas. Visual hierarchy comes from layout and spacing, not from varying border weights.
+- The hairline is intentionally low-contrast. It reads as a zone marker at normal viewing distance. If it's invisible at screenshot scale, that's correct — it's not a bold divider.
+
+If two adjacent sections feel merged, the fix is not a colour or border change. It is usually better copy structure, stronger heading, or accepting that the sections belong together.
+
 ## Copy conventions
 
 - English with Danish professional register — direct, credible, understated.
@@ -162,6 +174,6 @@ See `astro-static-sites` skill for the canonical `critique.js` template and the 
 
 **Single testimonial section:** If only one quote is shown, ensure it earns the canvas — strong quote, credible attribution, appropriate label. "CLIENT PERSPECTIVE" (singular) reads oddly; prefer "What clients say" or omit the section label.
 
-**CTA strip visual differentiation:** When a testimonial section and a CTA strip share a light background, they merge into one block. Neither `--surface-2` (too similar to `--bg`) nor `--accent-dim` (8% opacity, invisible at scale) provides enough separation. The reliable fix: give the CTA strip `background: var(--dark-bg)` with explicit text colour overrides (`color: var(--dark-text)` on h2/p, `color: #818cf8` on `.section-label`). This creates a deliberate light-dark rhythm — hero dark, content light, testimonials light, CTA dark, footer dark — and removes any ambiguity. Subtle tint changes are not enough; use dark or light, not in-between.
+**CTA strip visual differentiation:** When a testimonial section and a CTA strip share a light background they can appear to merge. Do not attempt to fix this with colour — neither `--surface-2` (too similar to `--bg`), `--accent-dim` (8% opacity, invisible at scale), nor a dark background (creates a heavy dark mass before the dark footer) solves it cleanly. The right answer: accept natural flow. A testimonial followed by a CTA is one thought — social proof into action. They are allowed to read as a continuation. Consistent `1px solid var(--border)` hairlines via `.section-alt` and `.cta-strip` are sufficient. Do not add bespoke separators or background overrides for this transition.
 
 **Testimonials page format:** Two formats are intentional — featured cards (expanded: italic quote + attribution) for primary testimonials, list rows for secondary ones. This reads as hierarchy, not inconsistency. Do not collapse to one format.
