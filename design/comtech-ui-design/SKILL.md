@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.2.0"
+version: "2.3.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -162,4 +162,6 @@ See `astro-static-sites` skill for the canonical `critique.js` template and the 
 
 **Single testimonial section:** If only one quote is shown, ensure it earns the canvas — strong quote, credible attribution, appropriate label. "CLIENT PERSPECTIVE" (singular) reads oddly; prefer "What clients say" or omit the section label.
 
-**CTA strip visual differentiation:** When a testimonial section and a CTA strip appear on the same light background, they merge into one block. Differentiate with a subtle top border, a tint change, or tighter padding to mark the zone break.
+**CTA strip visual differentiation:** When a testimonial section and a CTA strip share a light background, they merge into one block. Neither `--surface-2` (too similar to `--bg`) nor `--accent-dim` (8% opacity, invisible at scale) provides enough separation. The reliable fix: give the CTA strip `background: var(--dark-bg)` with explicit text colour overrides (`color: var(--dark-text)` on h2/p, `color: #818cf8` on `.section-label`). This creates a deliberate light-dark rhythm — hero dark, content light, testimonials light, CTA dark, footer dark — and removes any ambiguity. Subtle tint changes are not enough; use dark or light, not in-between.
+
+**Testimonials page format:** Two formats are intentional — featured cards (expanded: italic quote + attribution) for primary testimonials, list rows for secondary ones. This reads as hierarchy, not inconsistency. Do not collapse to one format.

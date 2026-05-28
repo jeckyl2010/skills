@@ -5,7 +5,7 @@ skills:
   path: design/comtech-ui-design
   description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk
     — reference before adding any new UI, copy, or page to the site.
-  version: 2.2.0
+  version: 2.3.0
   tags:
   - comtech
   - ui
@@ -62,7 +62,7 @@ skills:
   path: engineering/astro-static-sites
   description: Build, review, and extend Astro static sites — config, integrations,
     SEO, deployment to GitHub Pages.
-  version: 1.2.0
+  version: 1.3.0
   tags:
   - astro
   - static-site

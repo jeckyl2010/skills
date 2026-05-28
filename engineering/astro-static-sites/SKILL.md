@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.2.0"
+version: "1.3.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -489,11 +489,7 @@ CSS: small uppercase label left, links right, same muted text color as `footer-e
 
 The site ships a `scripts/critique.js` Playwright script that captures every page at desktop (1440×900) and mobile (390×844) viewports — both above-the-fold and full-page — then writes a manifest at `screenshots/critique/manifest.json`.
 
-Run it:
-```
-npm run critique        # full build + capture
-npm run critique:fast   # skip build, use existing dist/
-```
+Run it:\n```\nnpm run critique        # full build + capture\nnpm run critique:fast   # skip build, use existing dist/\n```\n\n`critique:fast` serves the existing `dist/` — CSS or markup changes made after the last build will NOT be visible in the screenshots. Always run `npm run critique` (full build) when verifying a CSS or layout change. Use `critique:fast` only when re-capturing after a build you just ran.
 
 After capture, load each screenshot via vision_analyze and ask for a strict UX/UI critique against the brand's design system. See `templates/critique.js` for the canonical script.
 
