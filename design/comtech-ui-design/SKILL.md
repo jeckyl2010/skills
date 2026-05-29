@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.6.0"
+version: "2.7.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -69,8 +69,6 @@ Three tiers, all sharing the same `.btn` base — identical height, padding (0.6
 2. **btn-ghost-dark** — transparent, muted border. Secondary on dark sections.
 3. **btn-ghost** — transparent, light border. Secondary on light sections.
 
-**Utility modifier: btn-ai-summary** — extends btn-ghost-dark. `opacity: 0.6` at rest, `1` on hover. Signals tertiary without disappearing. Font size must match siblings.
-
 **Hierarchy rule:** demote utility actions via opacity only — never by shrinking font or padding.
 
 **Sizing rule:** when buttons in a group have unequal label lengths, set `min-width` so the shortest doesn't look stubby. Always pair with `text-align: center; justify-content: center`.
@@ -81,22 +79,24 @@ Three tiers, all sharing the same `.btn` base — identical height, padding (0.6
 
 1. See services (btn-primary) — primary conversion
 2. Contact Anders (btn-ghost-dark) — secondary, full name intentional
-3. Ask AI (btn-ghost-dark + btn-ai-summary) — utility, demoted via opacity
 
-## Cards
+Three CTAs is one too many. A third hero CTA dilutes focus and competes with conversion. If a utility action is genuinely useful, move it lower on the page (e.g. bottom of About) and give it minimal visual weight — a secondary link, not a button.
 
-- All cards use `border-radius: calc(var(--radius) * 1.5)` = 12px. No exceptions — consistency is the point.
-- Pills (`.tag`, `.bento-tag`) use `border-radius: 999px` — fully rounded is intentional, signals label/category vs container.
-- Pills use `display: inline-flex; align-items: center; justify-content: center` for correct text centering.
-- When a card has icon above title, wrap them in a header element with `gap: 0.4rem`. Do not tighten the outer card gap — it also compresses body and tag spacing.
-- Do not put icon inline with title when titles vary in length — they wrap inconsistently across cards.
+## Ask AI feature (disabled)
 
-## Ask AI feature
+Implementation: ChatGPT URL with injected structured prompt covering who Anders is, services, industries, credentials, contact. Opens new tab. Pure anchor, no backend.
 
-- ChatGPT only. URL: `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`
-- Opens new tab. Pure anchor tag — no backend, no JS.
-- Inline ChatGPT SVG logo (fill="currentColor", 1em × 1em). Label: "Ask AI".
-- macOS ChatGPT desktop app intercepts the link — expected OS behaviour, not a bug.
+Feature is sound — the prompt engineering is good, the utility is real. Disabled because the hero is the wrong placement. On a trust-led site, a CTA that sends the visitor to another product in another voice loses narrative control at the highest-stakes moment. The visitor gets their first real impression of COM<tech> through ChatGPT's output, not yours.
+
+Rule: any feature that routes the user off-platform during initial evaluation competes with the site's authority. Keep it if it has a home lower on the page. Disable it rather than leave it in the hero.
+
+- If re-enabled: macOS ChatGPT desktop app intercepts the link — expected OS behaviour, not a bug.rvices, industries, credentials, contact. Opens new tab. Pure anchor, no backend.
+
+Feature is sound — the prompt engineering is good, the utility is real. Disabled because the hero is the wrong placement. On a trust-led site, a CTA that sends the visitor to another product in another voice loses narrative control at the highest-stakes moment. The visitor gets their first real impression of COM<tech> through ChatGPT's output, not yours.
+
+Rule: any feature that routes the user off-platform during initial evaluation competes with the site's authority. Keep it if it has a home lower on the page. Disable it rather than leave it in the hero.
+
+- If re-enabled: macOS ChatGPT desktop app intercepts the link — expected OS behaviour, not a bug.
 
 ## AI discoverability
 

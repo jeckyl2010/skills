@@ -5,7 +5,7 @@ skills:
   path: design/comtech-ui-design
   description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk
     — reference before adding any new UI, copy, or page to the site.
-  version: 2.6.0
+  version: 2.7.0
   tags:
   - comtech
   - ui
@@ -18,7 +18,7 @@ skills:
   path: design/senior-ui-ux
   description: Apply senior UI/UX judgment to interfaces, user flows, interaction
     details, and product usability decisions.
-  version: 1.0.2
+  version: 1.0.3
   tags:
   - ux
   - ui

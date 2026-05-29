@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.0.2"
+version: "1.0.3"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -126,7 +126,8 @@ Anders's projects follow a strict motion policy:
 
 ## Pitfalls to avoid
 - Optimizing for visual novelty over usability
-- Too many competing calls to action
+- Too many competing calls to action. Three hero CTAs is one too many — the third dilutes conversion without adding authority.
+- Off-platform CTAs in the hero: any button that sends a visitor to another product (ChatGPT, LinkedIn, etc.) during initial evaluation hands over narrative control at the worst possible moment. Even well-implemented off-platform features (structured prompts, guided flows) belong lower on the page, not in the primary conversion zone.
 - Vague microcopy and unlabeled states
 - Hidden interactions without affordances
 - Ignoring loading, empty, error, and success states
