@@ -108,3 +108,4 @@ Load the relevant reference(s) for the current task. The principles above apply 
 | `references/framework-migration-cleanup.md` | Post-migration cleanup of old framework artifacts |
 | `references/github-pages-publish-verification.md` | Publishing a static site to GitHub Pages |
 | `references/github-actions-security.md` | GitHub Actions shell injection fix (env vars + bash array, no eval) and slash command namespacing |
+| `references/mk2conf-image-pipeline.md` | mk2conf image pipeline: parser → IR → emitter stages, alignment mechanics, auto-center design notes |
