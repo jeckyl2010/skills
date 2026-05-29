@@ -90,12 +90,6 @@ Feature is sound — the prompt engineering is good, the utility is real. Disabl
 
 Rule: any feature that routes the user off-platform during initial evaluation competes with the site's authority. Keep it if it has a home lower on the page. Disable it rather than leave it in the hero.
 
-- If re-enabled: macOS ChatGPT desktop app intercepts the link — expected OS behaviour, not a bug.rvices, industries, credentials, contact. Opens new tab. Pure anchor, no backend.
-
-Feature is sound — the prompt engineering is good, the utility is real. Disabled because the hero is the wrong placement. On a trust-led site, a CTA that sends the visitor to another product in another voice loses narrative control at the highest-stakes moment. The visitor gets their first real impression of COM<tech> through ChatGPT's output, not yours.
-
-Rule: any feature that routes the user off-platform during initial evaluation competes with the site's authority. Keep it if it has a home lower on the page. Disable it rather than leave it in the hero.
-
 - If re-enabled: macOS ChatGPT desktop app intercepts the link — expected OS behaviour, not a bug.
 
 ## AI discoverability
@@ -131,6 +125,10 @@ If two adjacent sections feel merged, the fix is not a colour or border change. 
 - "That is fine." as reassurance → cut it, the visitor didn't ask for it
 - "available inline below" → redundant, the thing is visually there
 - Em-dash in body copy, including data arrays and component props — not just prose
+
+## Testimonials — org diversity rule
+
+Home page deliberately surfaces three org voices: KPMG, Novo Nordisk, N3O. This is intentional — it signals breadth implicitly without claiming it. Do not consolidate to fewer orgs or swap quotes without raising it with Anders first. The Janus Tøth (Novo Nordisk) quote leads the featured section on the testimonials page — keep it there.
 
 ## What does not belong
 
