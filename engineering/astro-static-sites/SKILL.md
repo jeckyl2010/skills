@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.12.0"
+version: "1.13.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -126,6 +126,96 @@ Both jobs need it independently — the runner machinery is per-job, not inherit
 - Hardcoded color values in page-local `<style>` blocks — scan for `rgba(`, `#[0-9a-fA-F]` and replace with CSS custom properties
 - Class names that survive a redesign but describe the old context — e.g. `.repo-name` repurposed for service area card titles after GitHub section was removed. The class still renders, so it won't appear dead, but it carries wrong semantics and can mislead font/style audits. When auditing, check class names against what they actually render, not just whether they're referenced.
 - Hugo migration artifacts left in repo → see pitfalls section
+
+## CSS consolidation — full audit workflow
+
+This is the sequence that actually works when a site has accumulated CSS drift across page-local `<style>` blocks, inline styles, and global.css. Run it in order — skipping steps causes missed drift or broken builds.
+
+### 1. Inventory before touching anything
+
+Read every file before making a single change:
+- `src/styles/global.css` — full read, note every section heading
+- `src/layouts/Layout.astro` — shared chrome, nav, footer
+- Every `src/pages/*.astro` — both frontmatter and template
+
+Map what you find: class names defined in page-local `<style>` blocks, inline `style=""` attributes, hardcoded values (px, rgba, hex) that should be tokens. Do not patch during this pass.
+
+### 2. Dead CSS — remove first
+
+Before consolidating anything, kill dead rules. A dead rule is one whose selector never appears in any markup file.
+
+```bash
+# For each candidate class name:
+grep -r 'class-name' src/ | grep -v 'global.css'
+# No output = dead — safe to delete
+```
+
+Common dead groups after a site evolves through redesigns:
+- Old service layout: `.service-entry`, `.service-left`, `.service-num`, `.service-name`, `.service-body`
+- Old contact layout: `.contact-grid`, `.contact-item`, `.contact-label`, `.contact-value`
+- AI/experiment features removed: `.ai-summary`, `.repo-card`, `.signal-label`
+- Page intro: `.page-intro`, `.page-header` (if layout changed)
+
+Also check for the inverse — classes used in markup but defined nowhere. A missing style is silent on light backgrounds; invisible on dark ones.
+
+### 3. Inline styles — extract to classes
+
+```bash
+grep -rn 'style="' src/pages/ src/layouts/
+```
+
+Every hit that is not a dynamic binding (`style={expr}`) belongs in a named class. Common accumulation points:
+- `.btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }` — extracted from repeated `style="display:flex;gap:..."` on button containers
+- `.section-h2 { font-size: clamp(...); font-weight: 700; }` — from heading inline overrides
+- `.tag-md { ... }` — tag/pill elements with inline sizing
+
+Target state: **zero inline `style=""` attributes**. Every spacing, size, and colour decision lives in a named CSS class.
+
+### 4. Hardcoded values — replace with tokens
+
+Scan for raw values that duplicate design tokens:
+
+```bash
+grep -n 'border-radius: [0-9]' src/styles/global.css src/pages/*.astro src/layouts/*.astro
+grep -n 'rgba(' src/styles/global.css src/pages/*.astro
+grep -n '#[0-9a-fA-F]\{3,6\}' src/styles/global.css src/pages/*.astro
+```
+
+Most common offenders:
+- `border-radius: 12px` → `calc(var(--radius) * 1.5)` (or whatever the token resolves to)
+- `border-radius: 8px` → `var(--radius)`
+- Hardcoded hex colours in page-local blocks → `var(--text-2)`, `var(--border)`, etc.
+
+The `overflow: hidden` + `border-radius` combo in container/clip wrappers is easy to miss in a card-focused audit. Extend the radius scan to any selector with `overflow: hidden`.
+
+### 5. Duplicate chrome — consolidate to shared base classes
+
+Once dead rules are gone and tokens are in place, the duplicate chrome becomes visible. The typical accumulation: `.card`, `.bento-card`, `.strength-item`, `.award-item`, `.svc-card`, `.featured-card` — all sharing the same background/border/radius/shadow/transition. Changing hover shadow means finding six definitions.
+
+See the **CSS consolidation — card chrome pattern** section below for the full fix.
+
+### 6. Duplicate label/caps patterns — consolidate to utilities
+
+See the **CSS consolidation — label/caps pattern** section below.
+
+### 7. Verify after each commit
+
+After each consolidation pass:
+- `npm run build` — must be clean
+- `npm run lint` — 0 errors
+- Visual spot-check on a preview server — dark sections are the failure point (unstyled = invisible)
+
+Never bundle multiple consolidation passes into one commit. One logical change per commit makes regressions easy to isolate.
+
+### 8. Run Project Wallace as a closing check
+
+```
+https://www.projectwallace.com/css-code-quality?url=<domain>&prettify=1
+```
+
+Scores are directional. Most findings on a token-driven static site are expected. Assess each one before acting — see the **CSS quality audit** section for interpretation.
+
+---
 
 ## CSS consolidation — card chrome pattern
 
