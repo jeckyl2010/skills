@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.8.0"
+version: "1.9.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -120,6 +120,7 @@ Both jobs need it independently — the runner machinery is per-job, not inherit
 - Missing `site:` in astro.config.mjs → OG URLs and sitemap will be broken or absent
 - Page-local `<style>` blocks that duplicate patterns already in global.css → maintenance split
 - Inline `style=""` attributes used more than once → belong in classes
+- After any CSS cleanup pass, run `grep -rn 'style="' src/pages/ src/layouts/` — any hit that is not a dynamic binding (`style={...}`) is a candidate for extraction. Target state: zero inline `style=""` attributes. Every spacing, size, and color decision should live in a named CSS class. Decision rule: >1 page or shared layout concern → global utility; single page recurring element → page-local semantic class; true one-off with a non-obvious value → keep but add a comment.
 - No OG/Twitter meta → unfurled links on LinkedIn/Slack show nothing
 - Dead CSS in global.css from superseded layouts → run the detection pattern below
 - Hardcoded color values in page-local `<style>` blocks — scan for `rgba(`, `#[0-9a-fA-F]` and replace with CSS custom properties
@@ -708,4 +709,6 @@ This triggers all IntersectionObserver callbacks, then resets to top so fold cap
 - ViewTransitions replaces the head on page navigation; confirm meta tags are in the persistent layout, not page-level slots.
 - **macOS app URL interception overrides `target="_blank"`.** When a user has a desktop app installed (ChatGPT, Spotify, Slack), macOS registers it as the OS-level URL handler for that domain. Even with `target="_blank"`, clicking a link to `chatgpt.com` opens the app, not a browser tab. This is OS behaviour — there is nothing to fix in the HTML. Visitors without the app installed get a browser tab as expected. Do not add workarounds; mention it as expected behaviour if the user raises it.
 - **Orphaned CSS after markup refactor causes invisible elements on dark backgrounds.** When a layout section is moved or replaced, its CSS class names often disappear silently — the markup renders but elements are unstyled. On a dark background (`var(--dark-bg)`), unstyled links and text become invisible with no error. After any structural refactor, search `global.css` for the new class names to confirm styles exist before assuming the feature is working. The symptom is "I don't see the buttons" with a clean build.
+- **Preview server serves stale `dist/`.** After patching markup or CSS, restart the preview server — it serves the already-built `dist/`, not the new source. The symptom is confirming a visual change in the browser while it was built from the prior build. Pattern: kill the server, run `npm run build`, start a fresh server on a new port. Avoid reusing ports across a session — a zombie process may be bound to the old one silently.
+- **DOM queries are more reliable than browser vision for correctness checks.** The vision tool captures only one viewport height; deep content (e.g. a section at offset 2400px) shows blank. Use `browser_console` with `document.querySelectorAll('.class').length` + `window.getComputedStyle(el)` to verify that elements exist and have the right computed values. Reserve vision captures for layout-level sanity checks on content that is in the initial viewport.
 - patch mode corruption in .astro files: `mode=patch` (V4A format) is unreliable in `.astro` files — the diff tool can leak git diff headers (`+++ b/src/pages/about.astro`) verbatim into the file content, corrupting both frontmatter data arrays and template markup. This has triggered twice in practice: once editing a JS data array in the frontmatter block, once editing a `.map()` render section in the template. Recovery is always a `mode=replace` with a clean old/new pair that includes the corrupted diff-header text. Prevention: always use `mode=replace` for `.astro` files. The only exception where `mode=patch` is safe is small, isolated CSS additions in `<style>` blocks at the bottom of the file, where context lines are stable and the edit is additive-only.

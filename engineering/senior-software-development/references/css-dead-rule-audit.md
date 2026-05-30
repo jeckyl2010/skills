@@ -26,6 +26,7 @@ The user has explicitly called out that a "detailed review" still missed numerou
 | Markup classes | Classes on elements that have zero CSS rules (dead markup classes) |
 | Contextual overrides | `.dark-section .thing` rules missing from global, being substituted with inline styles |
 | Hover rules | `:hover` rules on selectors always beaten by a sibling rule with higher specificity |
+| Inline styles | `style=""` attributes on any element that isn't a dynamic binding — structural concerns belong in named CSS classes |
 
 ## Correct sequence
 
@@ -61,6 +62,36 @@ The user has explicitly called out that a "detailed review" still missed numerou
 | `index.astro` | `style="max-width: 68ch"` on blockquote | Layout constraint; moved to local CSS rule `.index-pull-quote` |
 | `services.astro` | `.svc-icon { border-radius: 8px }` | Hardcoded; replaced with `var(--radius)` |
 | `contact.astro` | `.step-icon { border-radius: 8px }` | Same |
+
+### Inline style elimination (2025-05 third pass)
+
+After the above two passes, a grep for `style="` across all page files revealed 15 remaining inline attributes — all structural concerns that belonged in CSS.
+
+**Patterns found and the right fix for each:**
+
+| File | Inline style | Resolution |
+|---|---|---|
+| `about.astro` | `<h2 style="margin-bottom: 0.75rem;">` × 5 different sections | Page-local semantic classes `.section-h2`, `.section-h2-tight`, `.section-h2-snug` |
+| `about.astro` | `<p style="max-width: 52ch; margin-bottom: 2rem;">` × 3 | Page-local `.section-sub`, `.section-sub-narrow`, `.section-sub-wide` |
+| `about.astro` | `<div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">` | Global utility `.btn-row` added to `global.css` |
+| `about.astro` | Multiple tag `<span>` with per-iteration `font-size`/`padding` | Global utility `.tag-md` added to `global.css` |
+| `about.astro` | `<p style="margin-top: 1rem;">` on second body paragraph | Page-local `.about-body-spaced` |
+| `about.astro` | `{a.detail && <p style="margin-top: 0.375rem;">` | Page-local `.award-detail` |
+| `index.astro` | `<div style="margin-top: 1.5rem;">` (testimonial CTA wrapper) | Page-local `.hero-testimonial-cta` |
+| `services.astro` | `<section ... style="padding-top: 4rem; padding-bottom: 4rem;">` | Page-local `.svc-principles-section` |
+
+**Decision rule for each inline style found:**
+- Used on >1 page, or a layout concern shared across element types → global utility (`.btn-row`, `.tag-md`)
+- Used only on this page, but not a one-off — applies consistently to a recurring element within the page → page-local semantic class
+- True one-off (e.g. a single element with a unique value that will never recur) → leave as-is, mark with a comment if non-obvious
+
+**After this pass:** zero inline `style=""` attributes remain on any page. Every spacing, sizing, and color decision is expressed in CSS with a named class.
+
+**Detection command:**
+```bash
+grep -rn 'style="' src/pages/ src/layouts/
+```
+Run this as the final check after any consolidation pass. Any hit that is not a dynamic binding (i.e. not `style={...}`) is a candidate for extraction.
 
 ## Shared-class pattern (consolidation signal)
 
