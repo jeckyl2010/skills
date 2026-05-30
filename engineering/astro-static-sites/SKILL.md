@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.5.0"
+version: "1.6.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -126,6 +126,44 @@ Both jobs need it independently — the runner machinery is per-job, not inherit
 - Class names that survive a redesign but describe the old context — e.g. `.repo-name` repurposed for service area card titles after GitHub section was removed. The class still renders, so it won't appear dead, but it carries wrong semantics and can mislead font/style audits. When auditing, check class names against what they actually render, not just whether they're referenced.
 - Hugo migration artifacts left in repo → see pitfalls section
 
+## CSS consolidation — card chrome pattern
+
+Astro sites accumulate duplicate card chrome across page-local `<style>` blocks. The typical set: `.card`, `.bento-card`, `.strength-item`, `.award-item`, `.svc-card`, `.featured-card` — all sharing the same `background: var(--surface); border: 1px solid var(--border); border-radius: ...; padding: ...; box-shadow: ...; transition: ...`. Changing hover shadow or border-radius means finding six definitions.
+
+**Fix:** define a shared selector rule in `global.css` for the classes that are always identical:
+
+```css
+.card,
+.bento-card,
+.strength-item,
+.award-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 1.5);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card:hover,
+.bento-card:hover,
+.strength-item:hover,
+.award-item:hover {
+  box-shadow: var(--shadow);
+  border-color: #d4d4d8;
+}
+```
+
+Page-local classes (e.g. `svc-card`, `featured-card`) that live inside Astro's scoped `<style>` blocks **cannot** participate in global selectors. Keep their chrome local, but still use the design token (`calc(var(--radius) * 1.5)`) — never hardcode `12px` or any other px value that duplicates a token.
+
+**Rule: never hardcode `border-radius: 12px` (or any value that is already a design token).** A raw px value survives a token rename; the token does not.
+
+**Quick dead CSS audit before and after consolidation:**
+
+```bash
+# For each class name you're about to remove from a page-local block:
+grep -r 'class-name' src/ | grep -v 'global.css'
+# If no match in markup → safe to remove or centralize
+```
+
 ## Dead CSS detection
 
 When reviewing global.css, extract class names and check which ones are actually referenced in src/:
@@ -194,14 +232,16 @@ CSS (gate behind `.js` class — see pitfalls):
 
 ```css
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-.js .fade-up          { opacity: 0; transform: translateY(18px); }
+.js .fade-up          { opacity: 0; }
 .js .fade-up.visible  { animation: fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 ```
 
-18px rise, 420ms, natural ease-out. Single pass — never re-triggers on re-entry. Hero excluded (already visible on load).
+Opacity-only. 420ms, natural ease-out. Single pass — never re-triggers on re-entry. Hero excluded (already visible on load).
+
+**No Y-axis translate.** Even a small `translateY(18px)` violates the motion policy for this site (calm, no entrance theatrics) and can cause layout jank on mobile during scroll. If the name `fade-up` is already in use and removing the translate feels like a rename — leave the class name, change only the CSS.
 
 ### Animation tone
 

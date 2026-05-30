@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.9.0"
+version: "3.0.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -49,7 +49,7 @@ Dark sections (hero, footer): --dark-bg #0d0d10 / --dark-surface #17171c / --dar
 
 ## Motion
 
-- Subtle fade-in on scroll (`.fade-up`) — opacity + translateY only.
+- Subtle fade-in on scroll (`.fade-up`) — **opacity only**. No translateY, not even a small one. Y-axis movement is entrance theatrics regardless of magnitude.
 - No slides, bounces, staggers, or entrance theatrics.
 - Hover: `all 0.15s ease` maximum.
 
