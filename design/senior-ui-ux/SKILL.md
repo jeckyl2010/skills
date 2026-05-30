@@ -201,3 +201,8 @@ This outperforms copy polish, layout changes, and additional proof signals becau
 - `references/consultancy-proof-pages.md` — compact notes on presenting testimonial-heavy consultancy pages for scan-first trust building.
 - `references/high-trust-consultancy-sites.md` — review framework for professional-services sites.
 - `scripts/wcag-contrast-check.py` — paste in colour token pairs, get a WCAG AA pass/fail table.
+
+## Changelog
+
+- 1.2.0: Added CTA conversion section for senior consultancy sites — pre-filled mailto, availability signal, and rationale for ruling out forms, calendar, LinkedIn CTA.
+- 1.1.0: Animation motion constraints, conversion pitfalls, disclosure affordance, accent token drift.
