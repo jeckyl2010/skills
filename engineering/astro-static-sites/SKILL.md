@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.10.0"
+version: "1.11.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -586,6 +586,75 @@ Footer row pattern in Layout.astro (inside `<footer>`, below the main footer con
 
 CSS: small uppercase label left, links right, same muted text color as `footer-email`. Use `var(--dark-text-3)` for label and separator, `var(--dark-text-2)` for links, `var(--dark-text)` on hover. Border-top to visually separate from main footer row. See `references/ai-summary-css.md` for the full CSS block.
 
+
+## ESLint setup for Astro
+
+### Packages
+
+```bash
+npm install -D eslint eslint-plugin-astro eslint-plugin-jsx-a11y @typescript-eslint/parser
+```
+
+- `eslint-plugin-astro` — Astro-aware rules, supports `.astro` files in flat config
+- `eslint-plugin-jsx-a11y` — pulled in transitively and activated via `eslintPluginAstro.configs['flat/recommended']`; gives a11y coverage inside Astro templates
+- `@typescript-eslint/parser` — **required** if any `.astro` file uses TypeScript syntax in its frontmatter (`interface`, `as` cast, typed props, etc.). Without it, the parser throws on the frontmatter block and reports false-positive parse errors for every such file. Wire it explicitly in the Astro file override.
+
+### Flat config (eslint.config.js)
+
+```js
+import eslintPluginAstro from 'eslint-plugin-astro';
+import tsParser from '@typescript-eslint/parser';
+
+export default [
+  ...eslintPluginAstro.configs['flat/recommended'],
+
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parserOptions: {
+        parser: tsParser,        // parses TypeScript in .astro frontmatter
+        extraFileExtensions: ['.astro'],
+      },
+    },
+    rules: {
+      'astro/no-set-html-directive':          'warn',    // XSS risk — only acceptable for hardcoded static data
+      'astro/no-unused-define-vars-in-style': 'error',
+    },
+  },
+
+  {
+    ignores: ['dist/**', 'node_modules/**'],
+  },
+];
+```
+
+### package.json script
+
+```json
+"lint": "eslint \"src/**/*.astro\" \"src/**/*.ts\" \"src/**/*.js\""
+```
+
+### CI — run before build
+
+Add a lint step before the build in the deploy workflow. A lint failure before build prevents a broken deploy:
+
+```yaml
+- name: Lint
+  run: npm run lint
+
+- name: Build with Astro
+  run: npm run build
+```
+
+### Common findings in Astro files
+
+| Finding | Fix |
+|---|---|
+| `role="list"` on `<ul>` | Remove — `<ul>` already has an implicit list role; adding it explicitly is redundant and generates a lint warning |
+| Template string class concatenation `class={\`foo $\{flag ? 'bar' : ''}\`}` | Use Astro's idiomatic `class:list={['foo', { bar: flag }]}` directive |
+| `set:html` on a static hardcoded SVG string | Keep — `set:html` is the correct way to render inline SVG from data arrays. Downgrade to `warn` and add a comment: `{/* set:html safe — SVG is hardcoded static data, not user input */}` |
+
+See `templates/eslint.config.js` for a ready-to-copy config.
 
 ## CSS quality audit (Project Wallace)
 
