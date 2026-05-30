@@ -1020,9 +1020,9 @@ for k, a in data['audits'].items():
         print(a['title'], f'~{round(ms)}ms')
 ```
 
-### comtechconsulting.dk baseline (30.05.2026)
+### comtechconsulting.dk baseline (30.05.2026, updated after audit remediation)
 
-Performance 99 · Accessibility 100 · Best Practices 100 · SEO 100
+Performance 100 · Accessibility 100 · Best Practices 100 · SEO 100
 
 ## Accessibility checklist (static Astro sites)
 
@@ -1032,6 +1032,8 @@ Before shipping any page:
 - `<nav>` is the semantic landmark. `role="navigation"` is redundant — remove it; keep `aria-label`.
 - `og:locale` must be a valid OGP locale (`en_GB`, `da_DK`). `en_DK` is not registered.
 - Font preloads must cover every weight used above the fold. Audit via DevTools Network tab filtered to font requests.
+- Custom `:focus-visible` ring required for polished sites — do not rely on browser defaults. Use `outline: 2px solid var(--accent); outline-offset: 3px;` scoped to `:focus-visible` (not `:focus`) to avoid showing the ring on mouse clicks.
+- Quote/italic consistency: if the site uses upright text for testimonials, any `font-style: italic` on `.hero-quote`, `.bento-pull`, `.blockquote-card`, or similar pull-quote elements creates inconsistency. Remove italic from all quote elements and keep the style signal in border, padding, or colour instead.
 
 - FCP 1.5s · LCP 1.7s · TBT 0ms · CLS 0 · TTI 1.7s
 - One diagnostic flag: render-blocking requests (score null — below penalty threshold)
