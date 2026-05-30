@@ -139,6 +139,8 @@ Anders's projects follow a strict motion policy:
 - Eyebrow label colour drift: when a page has multiple section labels using different CSS classes, they can silently get different colour tokens. Both are doing the same job so they must use the same token.
 - Redundant progressive disclosure cues on the same card: one disclosure affordance per card. The action link is the one to keep; the explanatory label is the one to remove.
 - Contact page metadata creep: timezone notes, response-SLA qualifiers, and operating-hours caveats add friction. A single "Usually replies within one business day." is enough.
+- Defensive copy on solo-operator sites: stating what is already implied ("no account managers", "one senior point of contact") signals insecurity rather than confidence. The visitor has already inferred these from the fact it's a one-person consultancy. Any copy that explains what you don't have belongs in the bin.
+- Orphaned secondary links: demoting a channel (e.g. LinkedIn) to a plain text link floating below a card creates visual orphaning. If the channel belongs at all, keep it inside the same card structure — same layout class, same row pattern — so it reads as part of the system rather than an afterthought.
 
 ## Support files
 

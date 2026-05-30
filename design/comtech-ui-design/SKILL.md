@@ -125,6 +125,10 @@ If two adjacent sections feel merged, the fix is not a colour or border change. 
 - "That is fine." as reassurance → cut it, the visitor didn't ask for it
 - "available inline below" → redundant, the thing is visually there
 - Em-dash in body copy, including data arrays and component props — not just prose
+- "No account managers, no intake steps" — stating what's obviously implied by being a one-person shop. The visitor already knows. Saying it signals insecurity, not confidence. Cut it.
+
+**Contact page channel hierarchy:**
+Email is the primary channel — give it full card treatment. LinkedIn belongs in the same card, same layout class, not orphaned as a plain text link below. An orphaned "Also on LinkedIn" reads as an afterthought. Keeping both in the card structure gives LinkedIn appropriate context while email still reads first.
 
 ## Testimonials — org diversity rule
 
