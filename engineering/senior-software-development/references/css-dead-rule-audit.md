@@ -93,6 +93,43 @@ grep -rn 'style="' src/pages/ src/layouts/
 ```
 Run this as the final check after any consolidation pass. Any hit that is not a dynamic binding (i.e. not `style={...}`) is a candidate for extraction.
 
+## CSS quality audit — Project Wallace
+
+URL: `https://www.projectwallace.com/css-code-quality?url=<your-domain>&prettify=1`
+
+Run this after any significant CSS consolidation pass. It surfaces four metrics: Maintainability, Complexity, Performance, Selector Uniqueness.
+
+### How to interpret the findings
+
+| Metric / Finding | Typical cause | Act? |
+|---|---|---|
+| **Large ruleset (26+ declarations)** | `:root {}` with design tokens | No — that's where they belong |
+| **High declaration duplication (40–55%)** | Token-driven stylesheet — `display: flex`, `gap`, `color` repeat across rules | No — expected at this scale |
+| **Embedded content (small bytes)** | Inline SVG for a decorative asset (noise texture, icon) | No — saves one HTTP request |
+| **Complex selectors (attribute + :nth-child)** | Hamburger/nav-toggle CSS animation | No — correct pattern, no simpler alternative without JS |
+| **`!important` > 0** | See `!important` audit below — often redundant | Yes — verify each one |
+| **Very high duplication (60%+)** | Real duplication, not token reuse | Yes — audit with the shared-class pattern |
+
+A score of 90+ across all four dimensions is the target for a token-driven static marketing site. Scores below that warrant investigation before dismissal.
+
+### `!important` audit
+
+For every `!important` declaration found, verify it is actually fighting a competing rule:
+
+1. Identify what property it is setting (e.g. `margin-top: 0 !important`).
+2. Check whether a universal reset (`*, ::before, ::after { margin-top: 0 }`) already sets it to the same value.
+3. Check whether any other rule at the same or lower specificity sets it to a different value.
+4. If nothing is being fought — the `!important` is redundant. Remove it.
+
+A universal reset (`* { margin-top: 0; margin-bottom: 0; }`) covers most spacing defaults. A defensive `!important` added before the reset existed is a common leftover. The browser computed value confirms it — `window.getComputedStyle(el).marginTop` should be `0px` with or without the `!important` if the reset is in place.
+
+```bash
+# Quick grep: find all !important declarations
+grep -n '!important' src/styles/global.css src/pages/*.astro src/layouts/*.astro
+```
+
+Each hit needs a comment explaining what it's overriding, or it should be removed.
+
 ## Shared-class pattern (consolidation signal)
 
 When multiple elements (`.card`, `.bento-card`, `.svc-card`, `.featured-card`, etc.) carry identical chrome declarations:

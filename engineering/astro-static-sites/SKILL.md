@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.9.0"
+version: "1.10.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -586,6 +586,16 @@ Footer row pattern in Layout.astro (inside `<footer>`, below the main footer con
 
 CSS: small uppercase label left, links right, same muted text color as `footer-email`. Use `var(--dark-text-3)` for label and separator, `var(--dark-text-2)` for links, `var(--dark-text)` on hover. Border-top to visually separate from main footer row. See `references/ai-summary-css.md` for the full CSS block.
 
+
+## CSS quality audit (Project Wallace)
+
+After any significant CSS consolidation pass, run:
+
+```
+https://www.projectwallace.com/css-code-quality?url=<domain>&prettify=1
+```
+
+Target: Maintainability 90+, Complexity 95+, Performance 90+. Scores are directional, not literal — each flagged item needs contextual assessment before acting. Most findings on a token-driven static site are expected, not actionable. Full interpretation guide and `!important` audit pattern in `senior-software-development/references/css-dead-rule-audit.md`.
 
 ## Lighthouse performance audit
 
