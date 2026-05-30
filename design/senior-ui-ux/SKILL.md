@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.0.3"
+version: "1.0.4"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -139,6 +139,7 @@ Anders's projects follow a strict motion policy:
 - Eyebrow label colour drift: when a page has multiple section labels using different CSS classes, they can silently get different colour tokens. Both are doing the same job so they must use the same token.
 - Redundant progressive disclosure cues on the same card: one disclosure affordance per card. The action link is the one to keep; the explanatory label is the one to remove.
 - Contact page metadata creep: timezone notes, response-SLA qualifiers, and operating-hours caveats add friction. A single "Usually replies within one business day." is enough.
+- Conversational phrases rarely survive translation to site copy: a line that works perfectly in dialogue ("not smart in a hurry and gone") often reads as a grievance, complaint, or unprofessional jab on a page. When a user offers a conversational phrase to express a concept, treat it as the direction — find the professional register equivalent, not a literal transcription.
 - Defensive copy on solo-operator sites: stating what is already implied ("no account managers", "one senior point of contact") signals insecurity rather than confidence. The visitor has already inferred these from the fact it's a one-person consultancy. Any copy that explains what you don't have belongs in the bin.
 - Orphaned secondary links: demoting a channel (e.g. LinkedIn) to a plain text link floating below a card creates visual orphaning. If the channel belongs at all, keep it inside the same card structure — same layout class, same row pattern — so it reads as part of the system rather than an afterthought.
 

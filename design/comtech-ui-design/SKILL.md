@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.7.0"
+version: "2.8.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -133,6 +133,31 @@ Email is the primary channel — give it full card treatment. LinkedIn belongs i
 ## Testimonials — org diversity rule
 
 Home page deliberately surfaces three org voices: KPMG, Novo Nordisk, N3O. This is intentional — it signals breadth implicitly without claiming it. Do not consolidate to fewer orgs or swap quotes without raising it with Anders first. The Janus Tøth (Novo Nordisk) quote leads the featured section on the testimonials page — keep it there.
+
+## Full-cycle engagement framing
+
+Anders prefers to be present from the first architectural decision through to production and value delivery — not parachute in, produce a document, and leave. This is a genuine differentiator from project-to-project advisory work and should be expressed on the about page.
+
+Correct framing (from about.astro): "The preference is to be present from the first architectural decision through to production — and to see value delivered, not just handed over."
+
+- "Not just handed over" carries the weight implicitly — the reader infers what the alternative is
+- Do not state this defensively ("unlike other consultants who...") or colloquially ("not smart in a hurry and gone" works in conversation, not on the site)
+- Place in the working style paragraph of the about intro, as a natural concluding sentence — not as a standalone callout
+
+## Web presence as regulatory evidence (Danish Skat)
+
+Danish tax authority examines one-person companies for signs of disguised employment. A professional web presence is direct evidence of genuine self-employment:
+- Actively marketing to the general public, not just one client
+- Carrying commercial risk
+- Having an independent professional identity outside any engagement
+
+This informs content priorities:
+- Testimonials from multiple named clients across different organisations and sectors → primary evidence of multiple customers
+- The court appointment → third-party institutional recognition of independent expert status
+- Long tenures (5y Novo, 5y Codan/RSA, 5y SDC) read as client satisfaction and retention, not hidden employment — especially when Novo ended in a mass restructuring, not a performance issue
+- A second case study from a different sector, or a second long-term client testimonial, is not just marketing — it is documentation
+
+Do not reduce client diversity on the home page or testimonials page for editorial tidiness. Three distinct org voices on the home page (KPMG, Novo, N3O) serve this purpose directly.
 
 ## What does not belong
 
