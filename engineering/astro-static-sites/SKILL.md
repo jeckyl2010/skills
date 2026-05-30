@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.18.0"
+version: "1.19.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -44,6 +44,9 @@ Every Layout.astro should carry:
 4. Twitter/X Card: `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image`
 5. `ogImage` prop on Layout with a sensible default (e.g. `/og-default.png`); individual pages can override
 6. `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />` — place before font preconnects. Text-based favicons (`<text>` element in SVG) collapse unreadably at 16px tab size; use drawn SVG polyline or path geometry instead.
+7. **Skip link** — add a visually-hidden skip link before `<header>` and a matching `id="main-content"` on `<main>`. Low cost, real keyboard usability win, and a signal to accessibility auditors that the site was built intentionally. Show-on-focus pattern is a single CSS rule.
+8. **JSON-LD structured data** — a `<script type="application/ld+json">` block in `<head>` with `Person` + `Organization` schema is appropriate for any solo consultancy site. Low cost, improves rich result eligibility, and works well with the `llms.txt` strategy. Use a `@graph` array so both types are in one script tag.
+9. **`og:locale`** — must be a valid OGP locale (`language_TERRITORY`). `en_GB` for English content from Denmark. `en_DK` is not a valid OGP value — it passes the build silently but is wrong.
 
 See `templates/layout-head.astro` for a ready-to-copy head block.
 
@@ -1074,6 +1077,8 @@ This triggers all IntersectionObserver callbacks, then resets to top so fold cap
 - `og:site_name` is easy to miss. If the brand name contains `<` or `>`, use HTML entities (`COM&lt;tech&gt;`).
 - ViewTransitions replaces the head on page navigation; confirm meta tags are in the persistent layout, not page-level slots.
 - **macOS app URL interception overrides `target="_blank"`.** When a user has a desktop app installed (ChatGPT, Spotify, Slack), macOS registers it as the OS-level URL handler for that domain. Even with `target="_blank"`, clicking a link to `chatgpt.com` opens the app, not a browser tab. This is OS behaviour — there is nothing to fix in the HTML. Visitors without the app installed get a browser tab as expected. Do not add workarounds; mention it as expected behaviour if the user raises it.
+- **`og:locale` must be a valid OGP locale.** `en_DK` is not valid — OGP requires `language_TERRITORY` using ISO 639-1 + ISO 3166-1 alpha-2. For English content published from Denmark, use `en_GB`. The mistake is silent: no build error, no unfurl warning, just a quietly wrong value. Check this whenever you set up or audit Layout.astro on a non-English-territory site.
+- **Infinite CSS animations on blurred/transformed elements cause continuous repaints.** Aurora blobs, gradient orbs, and any element animated with `animation-iteration-count: infinite` and `transform` or `filter: blur()` will trigger per-frame main-thread compositing unless the element is promoted to its own layer. Fix: add `will-change: transform` to the animated element's CSS rule. This moves it to the GPU compositor and eliminates the repaint cost. Only apply to elements that are already animating — speculative `will-change` on static elements wastes memory.
 - **Orphaned CSS after markup refactor causes invisible elements on dark backgrounds.** When a layout section is moved or replaced, its CSS class names often disappear silently — the markup renders but elements are unstyled. On a dark background (`var(--dark-bg)`), unstyled links and text become invisible with no error. After any structural refactor, search `global.css` for the new class names to confirm styles exist before assuming the feature is working. The symptom is "I don't see the buttons" with a clean build.
 - **Preview server serves stale `dist/`.** After patching markup or CSS, restart the preview server — it serves the already-built `dist/`, not the new source. The symptom is confirming a visual change in the browser while it was built from the prior build. Pattern: kill the server, run `npm run build`, start a fresh server on a new port. Avoid reusing ports across a session — a zombie process may be bound to the old one silently.
 - **DOM queries are more reliable than browser vision for correctness checks.** The vision tool captures only one viewport height; deep content (e.g. a section at offset 2400px) shows blank. Use `browser_console` with `document.querySelectorAll('.class').length` + `window.getComputedStyle(el)` to verify that elements exist and have the right computed values. Reserve vision captures for layout-level sanity checks on content that is in the initial viewport.

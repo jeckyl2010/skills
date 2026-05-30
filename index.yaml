@@ -18,7 +18,7 @@ skills:
   path: design/senior-ui-ux
   description: Apply senior UI/UX judgment to interfaces, user flows, interaction
     details, and product usability decisions.
-  version: 1.0.4
+  version: 1.0.5
   tags:
   - ux
   - ui
@@ -62,7 +62,7 @@ skills:
   path: engineering/astro-static-sites
   description: Build, review, and extend Astro static sites — config, integrations,
     SEO, deployment to GitHub Pages.
-  version: 1.18.0
+  version: 1.19.0
   tags:
   - astro
   - static-site

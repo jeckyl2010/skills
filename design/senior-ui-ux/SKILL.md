@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.0.4"
+version: "1.0.5"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -142,6 +142,8 @@ Anders's projects follow a strict motion policy:
 - Conversational phrases rarely survive translation to site copy: a line that works perfectly in dialogue ("not smart in a hurry and gone") often reads as a grievance, complaint, or unprofessional jab on a page. When a user offers a conversational phrase to express a concept, treat it as the direction — find the professional register equivalent, not a literal transcription.
 - Defensive copy on solo-operator sites: stating what is already implied ("no account managers", "one senior point of contact") signals insecurity rather than confidence. The visitor has already inferred these from the fact it's a one-person consultancy. Any copy that explains what you don't have belongs in the bin.
 - Orphaned secondary links: demoting a channel (e.g. LinkedIn) to a plain text link floating below a card creates visual orphaning. If the channel belongs at all, keep it inside the same card structure — same layout class, same row pattern — so it reads as part of the system rather than an afterthought.
+- **`<details>/<summary>` disclosure without an affordance cue.** The default browser triangle is too subtle on a styled site — it disappears or looks broken when `list-style: none` is set globally. Add an explicit chevron: set `summary { list-style: none }` + `summary::before { content: '›'; transition: transform 0.2s; }` + `details[open] summary::before { transform: rotate(90deg); }`. Also add `aria-label="Read full [item]"` to `<summary>` — the default accessible name is the visible text, which is often a truncated excerpt with no verb, giving screen-reader users no indication it is interactive. Use a verb-led label.
+- **Hardcoded accent border values silently drift from brand token.** When `rgba(R, G, B, 0.2)` appears in multiple files as a border colour derived from the brand accent, it is invisible coupling — a rebrand or contrast adjustment updates the token but not the literals. Extract to `--accent-border: rgba(83, 82, 204, 0.2)` in `:root` and reference it everywhere. Same pattern for a lighter hover-background: `--accent-light: rgba(83, 82, 204, 0.06)`. Keep these alongside `--accent` in the token block so the full accent family is visible in one place.
 
 ## Support files
 
