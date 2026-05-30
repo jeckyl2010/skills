@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.0.5"
+version: "1.1.0"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -45,6 +45,30 @@ When useful, structure responses as:
 - Accessibility concerns
 - Mobile / responsive concerns
 - Expected impact
+
+## External-consultant scorecard format
+
+When the user asks for a high-quality external review or "what would a senior expert say", use a scored dimension audit:
+
+Produce one paragraph per dimension (3–5 sentences). Lead with the score and a plain verdict, then state the strongest positive, then any remaining gap. End with an overall score and a brief summary verdict.
+
+Recommended dimensions for a trust-heavy marketing or consultancy site:
+1. Visual design & brand coherence
+2. Typography
+3. Information architecture & navigation
+4. Content quality
+5. Accessibility
+6. Performance & technical
+7. SEO & discoverability
+8. Conversion & CTA effectiveness
+9. Mobile experience
+10. Code quality & maintainability (if reviewer has code access)
+
+Score each /10. Give the overall as an average, not a rounded-up impression.
+
+Tone: direct, specific, evidence-based. Name the actual CSS property, the actual element, the actual page. Generic praise or generic criticism both signal a reviewer who didn't look closely.
+
+After applying fixes from the audit, the same reviewer should be able to rescore each dimension. Track which dimensions improved.
 
 ## Accessibility — WCAG contrast audits
 

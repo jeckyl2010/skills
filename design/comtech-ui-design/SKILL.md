@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "3.0.0"
+version: "3.1.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -19,6 +19,22 @@ Reference this skill before touching comtechconsulting.dk. Guiding principle: si
 - Copy is restrained. If a sentence can be cut without losing meaning, cut it.
 - "Anders Hybertz" is load-bearing — use it where a visitor needs to know there is a real person. "Contact Anders" beats "Contact".
 - Content bar is high: only material that directly serves a client evaluating whether to hire Anders.
+
+## Quote styling rule
+
+All quote-style text on the site — `.hero-quote`, `.bento-pull`, `.blockquote-card`, featured testimonial excerpts — must be **upright (non-italic)**. Emphasis comes from border treatment, muted colour, and size, not from font-style.
+
+`font-style: italic` was removed from all three elements in the May 2026 audit pass. If italic reappears on any quote class via a future patch, it is a regression.
+
+## Featured card gradient
+
+The featured-card background gradient is a design token, not a hardcoded value:
+
+```css
+--featured-bg: linear-gradient(135deg, #fafaff 0%, #f0f0ff 100%);
+```
+
+Both `.bento-featured` (global.css) and `.svc-featured` (services.astro) must reference `var(--featured-bg)`. Any hardcoded `#fafaff` or `#f0f0ff` literal in source is a drift error — fix it.
 
 ## Design tokens (src/styles/global.css)
 
