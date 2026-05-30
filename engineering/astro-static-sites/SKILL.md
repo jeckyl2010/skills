@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.11.0"
+version: "1.12.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -601,32 +601,45 @@ npm install -D eslint eslint-plugin-astro eslint-plugin-jsx-a11y @typescript-esl
 
 ### Flat config (eslint.config.js)
 
+eslint-plugin-astro 1.x (ESLint 9/10 flat config) exports named config arrays directly — not under `flat/`:
+
 ```js
 import eslintPluginAstro from 'eslint-plugin-astro';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
-  ...eslintPluginAstro.configs['flat/recommended'],
+  // Recommended rules for .astro files + embedded JS
+  ...eslintPluginAstro.configs.recommended,
+
+  // Accessibility rules (jsx-a11y) inside Astro templates
+  ...eslintPluginAstro.configs['jsx-a11y-recommended'],
 
   {
+    // TypeScript parser for .astro frontmatter blocks
     files: ['**/*.astro'],
     languageOptions: {
       parserOptions: {
-        parser: tsParser,        // parses TypeScript in .astro frontmatter
-        extraFileExtensions: ['.astro'],
+        parser: tsParser,
       },
-    },
-    rules: {
-      'astro/no-set-html-directive':          'warn',    // XSS risk — only acceptable for hardcoded static data
-      'astro/no-unused-define-vars-in-style': 'error',
     },
   },
 
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    rules: {
+      'astro/no-set-html-directive':          'warn',    // XSS risk — only acceptable for hardcoded static data
+      'astro/no-unused-define-vars-in-style': 'error',
+      'astro/prefer-class-list-directive':    'warn',
+      'astro/semi':                           ['warn', 'always'],
+    },
+  },
+
+  {
+    ignores: ['dist/**', 'node_modules/**', 'scripts/**'],
   },
 ];
 ```
+
+**Pitfall:** `eslintPluginAstro.configs['flat/recommended']` does not exist in 1.x — it throws a silent spread-of-undefined that produces zero rules. Use `configs.recommended` and `configs['jsx-a11y-recommended']` as separate spreads.
 
 ### package.json script
 
@@ -656,6 +669,40 @@ Add a lint step before the build in the deploy workflow. A lint failure before b
 
 See `templates/eslint.config.js` for a ready-to-copy config.
 
+## Astro major version upgrades
+
+### Astro 5 → 6
+
+Use the official upgrade CLI — it handles peer dep resolution correctly:
+
+```bash
+echo "" | npx @astrojs/upgrade
+```
+
+(The tool is interactive; piping an empty string accepts the default prompt.)
+
+**Breaking changes that hit a static marketing site:**
+
+| Change | Fix |
+|---|---|
+| `ViewTransitions` renamed to `ClientRouter` | Import and usage site both need updating — check both |
+| `import { ViewTransitions } from 'astro:transitions'` | → `import { ClientRouter } from 'astro:transitions'` |
+| `<ViewTransitions />` in layout | → `<ClientRouter />` |
+
+After upgrade, run `npm run build` immediately. Astro will surface any remaining breaking changes as build errors with actionable messages. On a plain static site (no SSR, no `@astrojs/react`, no env schema) this is typically the only breaking change to fix.
+
+`@astrojs/sitemap` 3.x is compatible with Astro 6 and upgrades cleanly alongside it via `@astrojs/upgrade`.
+
+### Pitfall: ESLint after Astro upgrade
+
+`eslint-plugin-astro` and `@typescript-eslint/parser` peer deps are independent of the Astro version. Upgrade ESLint devDeps separately:
+
+```bash
+npm install -D eslint@latest
+```
+
+ESLint 9 → 10 is a smooth upgrade for flat config projects — no config changes needed.
+
 ## CSS quality audit (Project Wallace)
 
 After any significant CSS consolidation pass, run:
@@ -665,6 +712,36 @@ https://www.projectwallace.com/css-code-quality?url=<domain>&prettify=1
 ```
 
 Target: Maintainability 90+, Complexity 95+, Performance 90+. Scores are directional, not literal — each flagged item needs contextual assessment before acting. Most findings on a token-driven static site are expected, not actionable. Full interpretation guide and `!important` audit pattern in `senior-software-development/references/css-dead-rule-audit.md`.
+
+### Project Wallace finding interpretation
+
+Most findings on a well-structured static site are expected, not actionable. Assess each one before touching code:
+
+| Finding | Typical cause | Action |
+|---|---|---|
+| High declaration duplication (40–55%) | Token-driven CSS — `display: flex`, `gap: 1rem`, `color: var(--x)` appear in many rules | None. Expected at this scale. |
+| Large ruleset (20–30 declarations) | `:root {}` design token block | None. Intentional architecture. |
+| Embedded content (100–500 bytes) | Inline SVG or data URI for a single decorative asset | None if it's one asset. Extra HTTP request would cost more. |
+| Complex selectors (attribute + pseudo-class) | Hamburger nav: `.nav-toggle[aria-expanded="true"] span:nth-child(n)` | None. Correct pattern for CSS-driven animation. |
+| `!important` present | Old defensive rule fighting a now-removed competing rule | Audit — remove if the universal reset (`* { margin: 0 }`) already covers it |
+
+**`!important` removal pattern:** if `* { margin-top: 0 }` (or similar universal reset) is already in global.css, any `margin-top: 0 !important` on a specific element is fighting nothing. Remove it. Verify in browser console:
+
+```js
+const sheets = Array.from(document.styleSheets);
+const rules = [];
+sheets.forEach(s => {
+  try {
+    Array.from(s.cssRules).forEach(r => {
+      if (r.style && r.style.marginTop && r.selectorText)
+        rules.push(`${r.selectorText}: ${r.style.marginTop}`);
+    });
+  } catch(e) {}
+});
+rules.join('\n');
+```
+
+If no rule is producing a competing `margin-top`, the `!important` is dead weight.
 
 ## Lighthouse performance audit
 
