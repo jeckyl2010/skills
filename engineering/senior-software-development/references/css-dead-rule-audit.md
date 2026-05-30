@@ -252,6 +252,38 @@ grep -n '!important' src/styles/global.css src/pages/*.astro src/layouts/*.astro
 
 Each hit needs a comment explaining what it's overriding, or it should be removed.
 
+## Typography consolidation pattern (shared selector block)
+
+When multiple rules carry identical typography declarations (font-size, font-weight, letter-spacing, text-transform), group the shared base properties under a combined selector list and keep only diverging properties in each rule:
+
+```css
+/* Before — three rules, four identical declarations each */
+.label-caps       { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.label-caps-muted { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+.section-label    { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+
+/* After — one shared block, diverging overrides only */
+.label-caps,
+.label-caps-muted,
+.section-label    { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.label-caps-muted { color: var(--text-3); }
+.section-label    { color: var(--accent); }
+```
+
+Signal: `grep` for the same `font-size` + `letter-spacing` + `text-transform` combination appearing in more than one rule. Single point of change going forward.
+
+## No-op default value pattern
+
+A CSS declaration that sets a property to its already-in-effect default is dead weight. Typical cases:
+
+| Declaration | Why it is a no-op |
+|---|---|
+| `gap: 0` on a flex container | `0` is the initial value of `gap` |
+| `:hover { box-shadow: var(--shadow-sm); border-color: var(--border); }` when the base rule already sets those same values | Sets the same value the element has at rest — hover is visually indistinguishable |
+| `animation: fade-up` where `fade-up` only changes `opacity: 0 → 1` with no `transform` | Keyframe name implies a translate that does not exist — misleads future maintainers; rename to match actual effect (e.g. `fade-in`) |
+
+Detection: for every `:hover` rule, compare each property/value against the same property in the base rule. For every `@keyframes` block, confirm the name matches what the keyframe actually does (not what it was originally intended to do).
+
 ## Shared-class pattern (consolidation signal)
 
 When multiple elements (`.card`, `.bento-card`, `.svc-card`, `.featured-card`, etc.) carry identical chrome declarations:
