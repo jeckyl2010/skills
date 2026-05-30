@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.6.0"
+version: "1.7.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -152,9 +152,25 @@ Astro sites accumulate duplicate card chrome across page-local `<style>` blocks.
 }
 ```
 
-Page-local classes (e.g. `svc-card`, `featured-card`) that live inside Astro's scoped `<style>` blocks **cannot** participate in global selectors. Keep their chrome local, but still use the design token (`calc(var(--radius) * 1.5)`) — never hardcode `12px` or any other px value that duplicates a token.
+Page-local classes that live inside Astro's scoped `<style>` blocks **cannot** participate in global selectors. Two approaches depending on whether the element is conceptually a card:
+
+**Option A — element IS a card:** add the global `card` class directly to the markup element alongside the page-local class. Strip background/border/radius/shadow/transition from the local `<style>`. The local class then holds only differential layout (padding overrides, gap, flex direction, etc.).
+
+```astro
+<!-- before -->
+<div class="repo-card repo-card-static">
+
+<!-- after — local style block shrinks to layout-only -->
+<div class="card repo-card repo-card-static">
+```
+
+**Option B — element is NOT a card (e.g. a wrapper with `overflow: hidden`):** keep chrome local, but use the design token (`calc(var(--radius) * 1.5)`) — never hardcode `12px` or any value that duplicates a token.
+
+Prefer Option A whenever the element and the shared `.card` class are semantically equivalent — it reduces local CSS and keeps token usage consistent automatically.
 
 **Rule: never hardcode `border-radius: 12px` (or any value that is already a design token).** A raw px value survives a token rename; the token does not.
+
+Hardcoded radius hides in container/clip wrappers too — not just card-shaped elements. Selectors like `.contact-links { overflow: hidden; border-radius: 12px }` or `.modal-inner { border-radius: 8px }` are easy to miss in a card-focused audit. Extend the audit scan to any selector containing `overflow: hidden` or `border-radius`:
 
 **Quick dead CSS audit before and after consolidation:**
 
