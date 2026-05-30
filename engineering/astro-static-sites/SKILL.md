@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.16.0"
+version: "1.17.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -361,17 +361,19 @@ function initFadeUp() {
 CSS (gate behind `.js` class — see pitfalls):
 
 ```css
-@keyframes fade-up {
+@keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 .js .fade-up          { opacity: 0; }
-.js .fade-up.visible  { animation: fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.js .fade-up.visible  { animation: fade-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 ```
 
 Opacity-only. 420ms, natural ease-out. Single pass — never re-triggers on re-entry. Hero excluded (already visible on load).
 
-**No Y-axis translate.** Even a small `translateY(18px)` violates the motion policy for this site (calm, no entrance theatrics) and can cause layout jank on mobile during scroll. If the name `fade-up` is already in use and removing the translate feels like a rename — leave the class name, change only the CSS.
+**No Y-axis translate.** Even a small `translateY(18px)` violates the motion policy for this site (calm, no entrance theatrics) and can cause layout jank on mobile during scroll.
+
+**Keyframe vs class naming.** The `@keyframes` name should describe what the animation actually does — opacity only → `fade-in`. The CSS class `.fade-up` stays in markup (renaming it would require touching every template). They are independent names: the keyframe is an implementation detail, the class is a semantic contract with the HTML.
 
 ### Animation tone
 
