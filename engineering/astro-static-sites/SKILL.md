@@ -704,6 +704,8 @@ import { getCollection } from 'astro:content';
 const strengths = await getCollection('strengths');
 ```
 
+> **Order pitfall**: `getCollection()` returns items in undefined order (typically alphabetical by `id`). Any collection whose display order matters MUST include an explicit `order: z.number()` field in the schema and a `.sort((a, b) => a.data.order - b.data.order)` at the call site. Add this at migration time — never assume the original array order is preserved.
+
 Entries wrap their fields under `.data` — not top-level:
 
 ```astro
