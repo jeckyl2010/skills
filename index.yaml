@@ -307,7 +307,7 @@ skills:
   path: engineering/senior-software-development
   description: Apply senior-level engineering judgment to code review, implementation,
     debugging, refactoring, and delivery planning.
-  version: 1.2.3
+  version: 1.2.4
   specificity: generic
   tags:
   - code-review

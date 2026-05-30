@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.2.3"
+version: "1.2.4"
 specificity: generic
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability]
 tool_agnostic: true
@@ -85,7 +85,7 @@ In practice:
 - **Redundant computation at call sites.** When a function builds an expensive resource internally (a link map, a compiled schema, a resolved nav tree), consider returning it alongside the main result rather than discarding it. Callers that need it will otherwise rebuild it — sometimes multiple times in the same request. Pattern: change `-> Result` to `-> tuple[Result, ExpensiveArtifact]` and unpack at the call site. Check for redundant calls after any refactor that touches shared resources.
 - **GitHub Actions shell injection via `${{ inputs.* }}` in `run:` blocks.** Template substitution happens before the shell sees the script — never interpolate inputs directly into a command string. Bind to env vars, build a bash array, and drop `eval`. See `references/github-actions-security.md` for the safe pattern.
 - **Generic `.claude/commands/` names collide with built-in slash commands.** `/changelog`, `/test`, `/deploy` are reserved or commonly claimed. Always prefix with the tool identifier: `mk2conf-changelog.md` → `/mk2conf-changelog`. See `references/github-actions-security.md` for the full rule.
-- **CSS/style reviews done incrementally miss dead rules and drift.** Reading only local context around a change — rather than every file in full — leaves orphaned rules and duplicate chrome that are only visible when the complete picture is assembled. Pattern for any style or CSS review: (1) read every relevant file in full before forming a finding list, (2) map all issues first, (3) only then start patching. Never patch file-by-file as you read — you will miss cross-file patterns. This is not optional for CSS work; incremental passes reliably produce false-negative reviews.
+- **CSS/style reviews done incrementally miss dead rules and drift — and reviews scoped only to cards miss everything else.** The user has explicitly flagged that a "detailed review" that only checks card chrome still leaves numerous issues in buttons, blockquotes, labels, inline styles, icon containers, and markup classes. Correct scope for a CSS review: (1) read ALL files in full before touching anything — global CSS plus every page/component with a local style block; (2) audit ALL element categories, not just cards — see `references/css-dead-rule-audit.md` for the full checklist; (3) build the complete finding list first; (4) only then patch. An incremental pass that narrows to one element type is not a detailed review — it is a partial pass that will draw a correction.
 
 - **Dead CSS rules are invisible unless you verify all selectors against the markup.** For each CSS rule found in a style block or stylesheet, confirm the selector matches at least one element in the current HTML/template. Classes left over from removed features, renamed elements, or layout refactors are otherwise silent — they cost nothing at runtime but mislead every future reviewer. Common missed cases: a class renamed in markup but not in CSS; a section removed from the page but whose styles stayed; a `:hover` rule always shadowed by a more specific sibling rule (e.g. `.foo:hover` always beaten by `.foo-static:hover` when every element carries both classes).
 
