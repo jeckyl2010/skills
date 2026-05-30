@@ -120,6 +120,71 @@ grep -rn 'style="' src/pages/ src/layouts/
 ```
 Run this as the final check after any consolidation pass. Any hit that is not a dynamic binding (i.e. not `style={...}`) is a candidate for extraction.
 
+## Dead class detection script (Astro/static sites)
+
+Use this pattern for a full codebase sweep — not just style blocks, but also markup classes with no corresponding CSS.
+
+```python
+import re
+
+files = {
+    "global.css": open("src/styles/global.css").read(),
+    "Layout.astro": open("src/layouts/Layout.astro").read(),
+    # add all pages/components
+}
+
+def extract_defined_classes(css_text):
+    return set(re.findall(r'\.([a-zA-Z][a-zA-Z0-9_-]+)', css_text))
+
+def extract_used_classes(html_text):
+    used = set()
+    for m in re.findall(r'class=["\']([^"\']+)["\']', html_text):
+        used.update(m.split())
+    for m in re.findall(r"class[=:{][^>]+", html_text):
+        used.update(re.findall(r'["\']([a-zA-Z][a-zA-Z0-9_-]+)["\']', m))
+    return used
+
+# For each .astro file, extract only the <style> block for CSS parsing
+def get_css(fname, content):
+    if fname.endswith(".astro"):
+        m = re.search(r'<style>(.*?)</style>', content, re.DOTALL)
+        return m.group(1) if m else ""
+    return content
+
+all_defined = set()
+for fname, content in files.items():
+    all_defined.update(extract_defined_classes(get_css(fname, content)))
+
+all_used = set()
+for content in files.values():
+    all_used.update(extract_used_classes(content))
+
+# JS-managed classes — not dead even though absent from static HTML
+js_managed = {"js", "fade-up", "visible", "open", "page"}
+# False positives from font @font-face URLs
+noise = {"woff2", "w3", "org"}
+
+dead_css = all_defined - all_used - js_managed - noise
+dead_markup = all_used - all_defined - js_managed - noise
+
+print("Dead CSS rules (defined, never used in markup):")
+for c in sorted(dead_css):
+    print(f"  .{c}")
+
+print("\nDead markup classes (used in HTML, no CSS rule):")
+for c in sorted(dead_markup):
+    print(f"  .{c}")
+```
+
+**False positive filter:**
+- `js`, `visible`, `open`, `fade-up`, `page` — set dynamically by JavaScript; not dead.
+- Font URL fragments (`woff2`, `w3`, `org`) — picked up from `@font-face src:` strings; not class names.
+- Structural/semantic containers (`.about-intro-left`, `.hero-content`) — present in markup, no CSS intentional; acceptable as long as it is a conscious choice.
+
+**What is genuinely dead:**
+- A class defined in CSS that never appears in any `class=` attribute → delete the rule.
+- A class in a `class=` attribute that has zero matching CSS rules → either a dead modifier (remove from markup) or a structural container (leave, document why).
+
 ## CSS quality audit — Project Wallace
 
 URL: `https://www.projectwallace.com/css-code-quality?url=<your-domain>&prettify=1`

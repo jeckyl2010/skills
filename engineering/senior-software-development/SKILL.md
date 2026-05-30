@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.2.6"
+version: "1.3.0"
 specificity: generic
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability]
 tool_agnostic: true
@@ -62,6 +62,21 @@ When resuming from a "remaining work" list in memory or session notes, always ch
 - Run a quick scan of every file mentioned in the remaining work list before proposing changes.
 - Cross-reference findings against the actual code — a finding about "hardcoded magic number" or "path traversal risk" may already be fixed.
 - Only surface items that are still outstanding. Surface the false-positives too so the user knows the list was audited, not blindly skipped.
+
+## Refactoring exit gate
+
+Every refactoring pass — no matter how small — must include a dead code sweep on the files touched before the work is considered done. This is non-negotiable. It is the operational form of the Boy Scout rule.
+
+After any refactoring, before closing the task:
+
+1. **Dead CSS** — for every CSS rule in touched files, verify the selector fires against at least one element in the current markup. If not, delete the rule. Common cause: a class renamed in markup but left in CSS; a section removed from the page; a leftover selector from a pre-refactor structure.
+2. **Dead markup classes** — for every `class=` attribute in touched templates, verify that at least one CSS rule targets that class. If none, either the class is a dead modifier (remove it) or it is a structural/semantic-only container (acceptable — note it consciously).
+3. **Dead variables and imports** — for JS/TS files, verify that every imported symbol and every declared variable is referenced. Unused imports and dead constants are the most common refactoring residue.
+4. **Dead data** — for any inline data array or constant defined in a component's frontmatter or module scope, verify it is rendered or consumed. Dead data arrays are the most common residue after a content migration.
+
+For Astro/static site dead class detection, use the Python pattern in `references/css-dead-rule-audit.md`.
+
+This is not a full audit — it is a scoped sweep of touched files. The full audit is a separate task. But touching a file without checking it for residue is not completing the refactoring.
 
 ## Code hygiene principles
 
