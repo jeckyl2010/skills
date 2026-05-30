@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.4.0"
+version: "1.5.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -484,6 +484,80 @@ Footer row pattern in Layout.astro (inside `<footer>`, below the main footer con
 
 CSS: small uppercase label left, links right, same muted text color as `footer-email`. Use `var(--dark-text-3)` for label and separator, `var(--dark-text-2)` for links, `var(--dark-text)` on hover. Border-top to visually separate from main footer row. See `references/ai-summary-css.md` for the full CSS block.
 
+
+## Lighthouse performance audit
+
+Run against the local production build, not the dev server — `npm run dev` skips optimisations that affect real scores.
+
+### Workflow
+
+```bash
+# 1. Build
+npm run build
+
+# 2. Start preview server in background
+npm run preview -- --port 4321 &   # or use terminal(background=true)
+
+# 3. Confirm it's up
+curl -s -o /dev/null -w "%{http_code}" http://localhost:4321   # expect 200
+
+# 4. Run Lighthouse
+CHROME_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
+npx lighthouse http://localhost:4321 \
+  --output=json \
+  --output-path=/tmp/lh-output.json \
+  --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
+  --only-categories=performance,accessibility,best-practices,seo
+
+# 5. Kill preview server when done
+```
+
+### macOS: no Chrome installed
+
+Lighthouse requires a Chromium-family browser. On macOS without Chrome, Brave works — but the `--chrome-path` CLI flag is not honoured reliably. Use the `CHROME_PATH` environment variable instead:
+
+```bash
+CHROME_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
+npx lighthouse <url> --chrome-flags="--headless=new --no-sandbox --disable-gpu" ...
+```
+
+`--headless=new` is required for Brave 148+ (old headless mode was removed in Chromium 112).
+
+### Parsing results
+
+Key fields in the JSON output:
+
+```python
+import json
+data = json.load(open('/tmp/lh-output.json'))
+
+# Category scores (0–100)
+for k, v in data['categories'].items():
+    print(v['title'], round(v['score'] * 100))
+
+# Core Web Vitals
+metrics = ['first-contentful-paint', 'largest-contentful-paint',
+           'total-blocking-time', 'cumulative-layout-shift', 'interactive']
+for m in metrics:
+    a = data['audits'][m]
+    print(a['title'], a.get('displayValue'), a.get('score'))
+
+# Opportunities with savings
+for k, a in data['audits'].items():
+    if a.get('details', {}).get('type') == 'opportunity' and (a.get('score') or 1) < 1:
+        ms = a.get('details', {}).get('overallSavingsMs', 0)
+        print(a['title'], f'~{round(ms)}ms')
+```
+
+### comtechconsulting.dk baseline (30.05.2026)
+
+Performance 99 · Accessibility 100 · Best Practices 100 · SEO 100
+
+- FCP 1.5s · LCP 1.7s · TBT 0ms · CLS 0 · TTI 1.7s
+- One diagnostic flag: render-blocking requests (score null — below penalty threshold)
+- Self-hosted fonts with preload eliminated font-chain latency
+
+See `references/lighthouse-comtech-2026-05.md` for full metric dump.
 
 ## Visual Review & Critique
 
