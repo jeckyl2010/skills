@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.15.0"
+version: "1.16.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -720,9 +720,40 @@ This is the most common template mistake after migration: accessing `s.title` in
 
 Content Collections pay off when: (a) multiple pages share the same data shape, (b) you want build-time Zod validation to catch data errors, or (c) you want to edit content without touching template markup.
 
+### Shared schema across similar collections
+
+When multiple collections share identical field shapes (e.g. two testimonial tiers), define one schema constant and reuse it:
+
+```ts
+const testimonialSchema = z.object({
+  category: z.string(),
+  excerpt:  z.string(),
+  quote:    z.string(),
+  name:     z.string(),
+  title:    z.string(),
+});
+
+const testimonialsF = defineCollection({ loader: file('./src/data/testimonials-featured.json'), schema: testimonialSchema });
+const testimonialsS = defineCollection({ loader: file('./src/data/testimonials-standard.json'), schema: testimonialSchema });
+```
+
+Avoids silent schema drift between the two files and keeps `content.config.ts` short.
+
+### Dead data check before migrating
+
+Before extracting a frontmatter array to a collection, confirm it is actually used in the template:
+
+```bash
+grep -n 'array_name' src/pages/page.astro
+```
+
+A defined-but-never-rendered array is dead code — delete it instead of migrating it. This was found in `testimonials.astro`: a `highlights` array (3 items) was defined in the frontmatter but had zero usage in the template.
+
 ### Migration value
 
-Moving inline data arrays from `.astro` frontmatter to JSON files + collections typically reduces page files by 20–25% of total line count. Example: about.astro went from 316 → 245 lines with three collections extracted.
+Moving inline data arrays from `.astro` frontmatter to JSON files + collections typically reduces page files by 20–25% of total line count. Examples:
+- `about.astro`: 316 → 245 lines (−71) with three collections extracted
+- `testimonials.astro`: 289 → 223 lines (−66), including removal of one dead array
 
 ## ESLint setup for Astro
 
