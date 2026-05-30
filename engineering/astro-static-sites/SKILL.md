@@ -739,6 +739,23 @@ const testimonialsS = defineCollection({ loader: file('./src/data/testimonials-s
 
 Avoids silent schema drift between the two files and keeps `content.config.ts` short.
 
+### Dead selector sweep after migration
+
+After extracting a page's data to collections, the page-local `<style>` block becomes a source of orphaned CSS. Classes that existed only to style the removed/refactored markup stay behind — silently — because the build has no way to flag them.
+
+Run a sweep immediately after each page migration:
+
+```bash
+# Extract every class name from the page's <style> block
+grep -oP '\.[a-z][a-z0-9_-]+' src/pages/page.astro | sort -u
+
+# For each one, check it appears in the template markup of the same file:
+grep -c 'class-name' src/pages/page.astro
+# Count of 1 (only the CSS definition itself) = dead selector — delete it
+```
+
+Also check media query overrides — orphaned selectors inside `@media` blocks are easy to miss because the block still contains live selectors alongside the dead ones. Found in practice: `.signal-grid` persisted in a responsive `@media` block in `testimonials.astro` alongside live `.featured-grid` after the Content Collections refactor removed the grid that used it.
+
 ### Dead data check before migrating
 
 Before extracting a frontmatter array to a collection, confirm it is actually used in the template:

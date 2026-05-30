@@ -63,6 +63,33 @@ The user has explicitly called out that a "detailed review" still missed numerou
 | `services.astro` | `.svc-icon { border-radius: 8px }` | Hardcoded; replaced with `var(--radius)` |
 | `contact.astro` | `.step-icon { border-radius: 8px }` | Same |
 
+### Dead markup class removal (2025-06 dead-code pass)
+
+Three more dead selectors / orphaned classes found and removed after Content Collections migration:
+
+| File | Type | Finding | Fix |
+|---|---|---|---|
+| `global.css` | Dead CSS rule | `.bento-full { grid-column: 1 / -1 }` — defined, no element ever carries it | Deleted |
+| `global.css` | Dead CSS rule | `.divider { border: none; border-top: 1px solid var(--border); margin: 4rem 0; }` — no `<hr>` or element uses it | Deleted |
+| `testimonials.astro` | Dead CSS in media query | `.signal-grid` inside `@media (max-width: 980px)` — the grid it styled was removed by the Content Collections refactor; the selector survived alongside live `.featured-grid` | Removed the selector from the comma list |
+| `contact.astro` | Dead markup class | `.contact-linkedin` on the LinkedIn `<a>` — modifier with zero CSS rules; link already fully styled by `.contact-primary-link` | Removed from class list |
+| `about.astro` | Dead markup class | `.repo-grid-single-source` on the strengths `<div>` — modifier added for future differentiation, never given any styles | Removed from class list |
+
+**Pattern: orphaned selectors inside media query comma lists.** When a layout section is removed, its CSS may survive inside a multi-selector `@media` block:
+
+```css
+@media (max-width: 980px) {
+  .signal-grid,        /* ← dead — the grid is gone */
+  .featured-grid {     /* ← live */
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+The block still compiles cleanly and lints pass — the dead selector is invisible noise. Include comma-separated selectors in the dead-CSS sweep.
+
+**Pattern: anticipatory modifier classes.** A class like `.repo-grid-single-source` or `.contact-linkedin` is often added during development for future differentiation that never arrived. No visual effect, no CSS — pure dead weight. Detection: grep the class name across global.css and all local `<style>` blocks. Zero matches = delete from markup.
+
 ### Inline style elimination (2025-05 third pass)
 
 After the above two passes, a grep for `style="` across all page files revealed 15 remaining inline attributes — all structural concerns that belonged in CSS.
