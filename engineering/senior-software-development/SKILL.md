@@ -1,7 +1,7 @@
 ---
 name: senior-software-development
 description: Apply senior-level engineering judgment to code review, implementation, debugging, refactoring, and delivery planning.
-version: "1.3.0"
+version: "1.3.1"
 specificity: generic
 tags: [code-review, refactoring, debugging, testing, implementation, maintainability]
 tool_agnostic: true

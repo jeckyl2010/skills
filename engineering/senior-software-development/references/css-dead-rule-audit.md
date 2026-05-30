@@ -181,6 +181,36 @@ for c in sorted(dead_markup):
 - Font URL fragments (`woff2`, `w3`, `org`) — picked up from `@font-face src:` strings; not class names.
 - Structural/semantic containers (`.about-intro-left`, `.hero-content`) — present in markup, no CSS intentional; acceptable as long as it is a conscious choice.
 
+**Astro-specific false positives — filter these before acting:**
+
+1. **`class:list` dynamic classes not captured by static regex.** Astro's conditional class syntax:
+   ```astro
+   <div class:list={['award-item', { 'award-item--featured': a.data.featured }]}>
+   ```
+   The regex `class=[\"\\']([^\"\\']+)[\"\\']` does not match `class:list={...}` — so dynamic
+   classes appear absent from `all_used`. They look dead in CSS but are live. Supplement the
+   detection script to also parse `class:list` occurrences:
+   ```python
+   for fname, content in files.items():
+       for m in re.findall(r"class:list=\{[^}]+\}", content):
+           all_used.update(re.findall(r"'([a-zA-Z][a-zA-Z0-9_-]+)'", m))
+   ```
+
+2. **`role=` attribute values.** Some regex variants using `class` as a substring match
+   `role="navigation"` etc. The string `navigation` then appears as a dead class. Always
+   anchor to `class=` (not just the substring `class`) and verify matches are actual `class=`
+   attributes before acting.
+
+3. **`class:list` boolean literal keys.** If the regex accidentally matches inside the JS object
+   literal body, the tokens `true` and `false` appear as class names. Add them to the noise set:
+   ```python
+   noise = {"woff2", "w3", "org", "true", "false"}
+   ```
+
+**Workflow implication:** after running the script, always classify every finding manually —
+dead CSS (remove the rule), dead markup class (remove from markup), or false positive (document
+and skip). Do not patch before the full classification pass is complete.
+
 **What is genuinely dead:**
 - A class defined in CSS that never appears in any `class=` attribute → delete the rule.
 - A class in a `class=` attribute that has zero matching CSS rules → either a dead modifier (remove from markup) or a structural container (leave, document why).
