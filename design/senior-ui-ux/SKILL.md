@@ -1,7 +1,7 @@
 ---
 name: senior-ui-ux
 description: Apply senior UI/UX judgment to interfaces, user flows, interaction details, and product usability decisions.
-version: "1.1.0"
+version: "1.2.0"
 tags: [ux, ui, accessibility, wcag, usability, copywriting, consultancy-sites]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -147,6 +147,33 @@ Anders's projects follow a strict motion policy:
 - Framer-motion is a large dependency that tends to get applied pervasively and with the wrong defaults. Before adding it to a project, confirm the scope is limited to a controlled wrapper component that enforces the above constraints
 - If framer-motion is already in a project: audit all usages. Replace staggered-slide patterns with a single constrained wrapper or drop the library in favour of CSS `transition-opacity`
 - The correct consolidation: create one `<FadeIn>` wrapper component that only ever does opacity fade (short duration, no y, no stagger), and route all motion through it
+
+## CTA conversion for senior consultancy sites
+
+When a consultancy site has ruled out forms, calendar scheduling, and social-platform CTAs, the two highest-value remaining levers are:
+
+**1. Pre-filled mailto**
+A `mailto:` link with a pre-filled subject and body removes the blank-compose friction that kills low-intent enquiries. Pattern:
+
+```html
+<a href="mailto:anders@comtechconsulting.dk?subject=Engagement%20enquiry&body=Hi%20Anders%2C%0A%0AI%27d%20like%20to%20discuss...">Send a message</a>
+```
+
+Cost: zero. No backend, no dependency, no maintenance. The pre-filled subject also gives the sender a framing scaffold — it lowers the activation energy for cautious buyers who know what they want but are reluctant to start from a blank email.
+
+Pair with a plain-prose note on what to include: \"A short brief or a quick question — either works.\" This removes the unspoken fear of sending an incomplete message.
+
+**2. Explicit availability signal**
+A visible, maintained signal near the primary CTA is the single highest-impact conversion change available on a static consultancy site. Cautious buyers (the primary audience) self-disqualify when they assume the consultant is booked. Making availability visible removes the assumption.
+
+Pattern: a single sentence above or near the CTA — \"Currently available for engagements starting Q3 2026.\" or \"Available from September.\" Keep it short, keep it current, update it when it changes.
+
+This outperforms copy polish, layout changes, and additional proof signals because it resolves a practical objection rather than a persuasion gap.
+
+**What to rule out for a senior consultancy brand:**
+- **Forms**: add friction and signal commodity. One-person consultancy; a mailto is more direct and more honest.
+- **Calendar scheduling**: spam risk is real (competitors, recruiters, cold openers booking slots without intent). The wrong audience self-selects in.
+- **LinkedIn CTA**: reads as too cheap for a senior brand — implies the consultant needs social proof of reach rather than client proof of outcomes. If LinkedIn belongs at all, it belongs in a footer footnote, not as a CTA.
 
 ## Pitfalls to avoid
 - Optimizing for visual novelty over usability
