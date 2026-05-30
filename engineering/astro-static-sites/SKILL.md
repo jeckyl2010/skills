@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.14.0"
+version: "1.15.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -655,6 +655,75 @@ Footer row pattern in Layout.astro (inside `<footer>`, below the main footer con
 CSS: small uppercase label left, links right, same muted text color as `footer-email`. Use `var(--dark-text-3)` for label and separator, `var(--dark-text-2)` for links, `var(--dark-text)` on hover. Border-top to visually separate from main footer row. See `references/ai-summary-css.md` for the full CSS block.
 
 
+## Content Collections (Content Layer API)
+
+Astro 6 uses only the Content Layer API — the legacy `type: 'content'` / `type: 'data'` syntax is removed. Every collection requires a `loader`.
+
+### Config file location
+
+```
+src/content.config.ts   ← Astro 6 (at the src/ level)
+src/content/config.ts   ← Astro 4/5 (inside src/content/) — NO LONGER WORKS
+```
+
+If you have an old `src/content/config.ts`, move it and update the loader syntax. The build error is explicit.
+
+### Minimal collection from a JSON file
+
+```ts
+// src/content.config.ts
+import { defineCollection, z } from 'astro:content';
+import { file } from 'astro/loaders';
+
+const strengths = defineCollection({
+  loader: file('./src/data/strengths.json'),
+  schema: z.object({
+    title: z.string(),
+    body:  z.string(),
+  }),
+});
+
+export const collections = { strengths };
+```
+
+**Required: every item in the JSON array must have an `id` field.** The `file()` loader uses it as the collection entry ID. A missing `id` is a build error.
+
+```json
+[
+  { "id": "architecture-long-view", "title": "...", "body": "..." },
+  { "id": "delivery-focus",         "title": "...", "body": "..." }
+]
+```
+
+### Querying in a page
+
+```ts
+import { getCollection } from 'astro:content';
+const strengths = await getCollection('strengths');
+```
+
+Entries wrap their fields under `.data` — not top-level:
+
+```astro
+{strengths.map(s => <h4>{s.data.title}</h4>)}
+```
+
+This is the most common template mistake after migration: accessing `s.title` instead of `s.data.title`.
+
+### Which data belongs where
+
+| Data type | Approach |
+|---|---|
+| Typed structured objects with multiple fields | `defineCollection` + `file()` loader |
+| Simple flat arrays (strings, enums) | Plain JSON import: `import data from '../data/foo.json'` |
+| Directory of Markdown/MDX files | `glob({ pattern: '**/*.md', base: './src/data/blog' })` |
+
+Content Collections pay off when: (a) multiple pages share the same data shape, (b) you want build-time Zod validation to catch data errors, or (c) you want to edit content without touching template markup.
+
+### Migration value
+
+Moving inline data arrays from `.astro` frontmatter to JSON files + collections typically reduces page files by 20–25% of total line count. Example: about.astro went from 316 → 245 lines with three collections extracted.
+
 ## ESLint setup for Astro
 
 ### Packages
@@ -756,8 +825,17 @@ echo "" | npx @astrojs/upgrade
 | `ViewTransitions` renamed to `ClientRouter` | Import and usage site both need updating — check both |
 | `import { ViewTransitions } from 'astro:transitions'` | → `import { ClientRouter } from 'astro:transitions'` |
 | `<ViewTransitions />` in layout | → `<ClientRouter />` |
+| Content config file moved | `src/content/config.ts` → `src/content.config.ts` (project root of `src/`) |
+| Legacy `type: 'content'` / `type: 'data'` collections removed | Every collection now requires a `loader` (see Content Collections section below) |
 
-After upgrade, run `npm run build` immediately. Astro will surface any remaining breaking changes as build errors with actionable messages. On a plain static site (no SSR, no `@astrojs/react`, no env schema) this is typically the only breaking change to fix.
+After upgrade, run `npm run build` immediately. Astro will surface any remaining breaking changes as build errors with actionable messages. The content config error is loud and actionable:
+
+```
+[LegacyContentConfigError] Found legacy content config file in "src/content/config.ts".
+Please move this file to "src/content.config.ts" and ensure each collection has a loader defined.
+```
+
+On a plain static site the ViewTransitions rename and the config file move are the two most common breaking changes.
 
 `@astrojs/sitemap` 3.x is compatible with Astro 6 and upgrades cleanly alongside it via `@astrojs/upgrade`.
 
