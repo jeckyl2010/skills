@@ -1,7 +1,7 @@
 ---
 name: comtech-ui-design
 description: Design system, visual language, tone, and UI conventions for comtechconsulting.dk — reference before adding any new UI, copy, or page to the site.
-version: "2.8.0"
+version: "2.9.0"
 tags: [comtech, ui, design-system, astro, brand]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -220,3 +220,5 @@ Fix (both lines required):
 **CTA strip visual differentiation:** When a testimonial section and a CTA strip share a light background they can appear to merge. Do not attempt to fix this with colour — neither `--surface-2` (too similar to `--bg`), `--accent-dim` (8% opacity, invisible at scale), nor a dark background (creates a heavy dark mass before the dark footer) solves it cleanly. The right answer: accept natural flow. A testimonial followed by a CTA is one thought — social proof into action. They are allowed to read as a continuation. Consistent `1px solid var(--border)` hairlines via `.section-alt` and `.cta-strip` are sufficient. Do not add bespoke separators or background overrides for this transition.
 
 **Testimonials page format:** Two formats are intentional — featured cards (expanded: italic quote + attribution) for primary testimonials, list rows for secondary ones. This reads as hierarchy, not inconsistency. Do not collapse to one format.
+
+**Footer wordmark hover:** `.footer .wordmark { color: var(--dark-text) }` overrides the base colour with higher specificity, so the general `a:hover { color: var(--accent) }` rule never fires on the footer wordmark — the hover silently does nothing while the nav wordmark animates. Always add `.footer .wordmark:hover { color: var(--accent); }` as a companion rule. If you add any element-specific colour override that lives inside `.footer` or `.dark-section`, check whether a hover rule is needed at the same specificity level.
