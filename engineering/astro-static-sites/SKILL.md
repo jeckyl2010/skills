@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.13.0"
+version: "1.14.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -129,91 +129,69 @@ Both jobs need it independently — the runner machinery is per-job, not inherit
 
 ## CSS consolidation — full audit workflow
 
-This is the sequence that actually works when a site has accumulated CSS drift across page-local `<style>` blocks, inline styles, and global.css. Run it in order — skipping steps causes missed drift or broken builds.
+When a site has accumulated CSS drift across page-local `<style>` blocks, inline styles, and a shared stylesheet, work through these phases in order. Skipping phases causes regressions or misses the real source of drift.
 
-### 1. Inventory before touching anything
+### Phase 1 — Read everything before touching anything
 
-Read every file before making a single change:
-- `src/styles/global.css` — full read, note every section heading
-- `src/layouts/Layout.astro` — shared chrome, nav, footer
-- Every `src/pages/*.astro` — both frontmatter and template
+Map the full surface before making a single change:
+- The shared stylesheet (global.css or equivalent) — read top to bottom, note every section
+- The shared layout component — nav, footer, document head
+- Every page component — both script/frontmatter and template
 
-Map what you find: class names defined in page-local `<style>` blocks, inline `style=""` attributes, hardcoded values (px, rgba, hex) that should be tokens. Do not patch during this pass.
+What to note: class names defined only in page-local style blocks, `style=""` attributes in markup, hardcoded values (px, hex, rgba) that duplicate design tokens, and class names that appear in the stylesheet but may not appear in any markup.
 
-### 2. Dead CSS — remove first
+Do not patch during this pass. The full picture changes what is worth fixing and what order to fix it in.
 
-Before consolidating anything, kill dead rules. A dead rule is one whose selector never appears in any markup file.
+### Phase 2 — Remove dead CSS first
+
+A dead rule is a selector that no longer appears in any markup file. Removing dead rules before consolidating prevents you from accidentally folding dead code into a shared base class.
 
 ```bash
-# For each candidate class name:
+# For each candidate selector, check if it appears in markup:
 grep -r 'class-name' src/ | grep -v 'global.css'
 # No output = dead — safe to delete
 ```
 
-Common dead groups after a site evolves through redesigns:
-- Old service layout: `.service-entry`, `.service-left`, `.service-num`, `.service-name`, `.service-body`
-- Old contact layout: `.contact-grid`, `.contact-item`, `.contact-label`, `.contact-value`
-- AI/experiment features removed: `.ai-summary`, `.repo-card`, `.signal-label`
-- Page intro: `.page-intro`, `.page-header` (if layout changed)
+Dead CSS accumulates predictably after redesigns: layout sections replaced but their styles left behind, features removed but their classes not cleaned up, experimental components that never shipped. Check for the inverse too — classes present in markup but defined nowhere. A missing style is silent on light backgrounds and invisible on dark ones.
 
-Also check for the inverse — classes used in markup but defined nowhere. A missing style is silent on light backgrounds; invisible on dark ones.
-
-### 3. Inline styles — extract to classes
+### Phase 3 — Extract inline styles to named classes
 
 ```bash
 grep -rn 'style="' src/pages/ src/layouts/
 ```
 
-Every hit that is not a dynamic binding (`style={expr}`) belongs in a named class. Common accumulation points:
-- `.btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }` — extracted from repeated `style="display:flex;gap:..."` on button containers
-- `.section-h2 { font-size: clamp(...); font-weight: 700; }` — from heading inline overrides
-- `.tag-md { ... }` — tag/pill elements with inline sizing
+Every static `style=""` attribute (not a dynamic binding like `style={expr}`) belongs in a named class. The pattern that accumulates: layout utilities applied inline on individual elements — flex containers, spacing overrides, heading size adjustments — that are identical or near-identical across multiple pages.
 
-Target state: **zero inline `style=""` attributes**. Every spacing, size, and colour decision lives in a named CSS class.
+Target state: zero static `style=""` attributes. Every spacing, size, and colour decision lives in a named CSS class with a name that describes its purpose.
 
-### 4. Hardcoded values — replace with tokens
+### Phase 4 — Replace hardcoded values with design tokens
 
-Scan for raw values that duplicate design tokens:
+Scan for raw values that duplicate tokens already defined in `:root`:
 
 ```bash
 grep -n 'border-radius: [0-9]' src/styles/global.css src/pages/*.astro src/layouts/*.astro
-grep -n 'rgba(' src/styles/global.css src/pages/*.astro
-grep -n '#[0-9a-fA-F]\{3,6\}' src/styles/global.css src/pages/*.astro
+grep -n 'rgba\|#[0-9a-fA-F]\{3,6\}' src/pages/*.astro src/layouts/*.astro
 ```
 
-Most common offenders:
-- `border-radius: 12px` → `calc(var(--radius) * 1.5)` (or whatever the token resolves to)
-- `border-radius: 8px` → `var(--radius)`
-- Hardcoded hex colours in page-local blocks → `var(--text-2)`, `var(--border)`, etc.
+Common offenders: hardcoded border-radius values that match or derive from a radius token, hardcoded colour values in page-local blocks that duplicate a text, border, or surface token.
 
-The `overflow: hidden` + `border-radius` combo in container/clip wrappers is easy to miss in a card-focused audit. Extend the radius scan to any selector with `overflow: hidden`.
+One trap: `overflow: hidden` + `border-radius` in wrapper/clip elements. These are not visually card-shaped so they get missed in a card-focused audit. Extend the radius scan to any selector containing `overflow: hidden`.
 
-### 5. Duplicate chrome — consolidate to shared base classes
+### Phase 5 — Consolidate duplicate chrome into shared base classes
 
-Once dead rules are gone and tokens are in place, the duplicate chrome becomes visible. The typical accumulation: `.card`, `.bento-card`, `.strength-item`, `.award-item`, `.svc-card`, `.featured-card` — all sharing the same background/border/radius/shadow/transition. Changing hover shadow means finding six definitions.
+With dead rules removed and tokens in place, duplicate chrome becomes legible. The typical pattern: several visually identical component types — cards, list items, grid cells — each defining the same background, border, radius, shadow, and transition independently. A single design change (hover shadow, border colour) requires finding and updating every copy.
 
-See the **CSS consolidation — card chrome pattern** section below for the full fix.
+Fix: identify the shared base and extract it to a single multi-selector rule in the shared stylesheet. Page-local classes then hold only the differential layout. See the **card chrome pattern** and **label/caps pattern** sections below for the specific consolidation approach.
 
-### 6. Duplicate label/caps patterns — consolidate to utilities
+### Phase 6 — Commit each logical change separately
 
-See the **CSS consolidation — label/caps pattern** section below.
+One consolidation pass per commit. Dead CSS removal is one commit. Inline style extraction is another. Token replacement is another. This makes regressions trivially isolatable — a visual break points to exactly one change, not a bundled diff of 200 lines.
 
-### 7. Verify after each commit
+After each commit: `npm run build` must be clean, `npm run lint` must be 0 errors, and a visual spot-check against a preview server catches any unstyled elements. Dark-background sections are the most likely failure point — unstyled text and links are invisible there.
 
-After each consolidation pass:
-- `npm run build` — must be clean
-- `npm run lint` — 0 errors
-- Visual spot-check on a preview server — dark sections are the failure point (unstyled = invisible)
+### Phase 7 — Closing quality check
 
-Never bundle multiple consolidation passes into one commit. One logical change per commit makes regressions easy to isolate.
-
-### 8. Run Project Wallace as a closing check
-
-```
-https://www.projectwallace.com/css-code-quality?url=<domain>&prettify=1
-```
-
-Scores are directional. Most findings on a token-driven static site are expected. Assess each one before acting — see the **CSS quality audit** section for interpretation.
+Run a CSS quality tool (e.g. Project Wallace) against the deployed or preview URL after consolidation is complete. Scores are directional — most findings on a token-driven static site are expected and not actionable. Assess each finding individually. See the **CSS quality audit** section for interpretation.
 
 ---
 
