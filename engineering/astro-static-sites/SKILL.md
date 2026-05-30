@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.7.0"
+version: "1.8.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -178,6 +178,51 @@ Hardcoded radius hides in container/clip wrappers too — not just card-shaped e
 # For each class name you're about to remove from a page-local block:
 grep -r 'class-name' src/ | grep -v 'global.css'
 # If no match in markup → safe to remove or centralize
+```
+
+## CSS consolidation — label/caps pattern
+
+Uppercase label styles (`font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase`) accumulate across page-local `<style>` blocks with invisible drift — typically in `letter-spacing` (0.08em vs 0.1em) or `font-weight` (600 vs 700). These render nearly identically but are not the same expression.
+
+**Fix:** define two base utility classes in `global.css`:
+
+```css
+.label-caps {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.label-caps-muted {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+```
+
+Add the base class to the markup element alongside the existing page-local class:
+
+```astro
+<span class="contact-link-label label-caps-muted">Email</span>
+<p class="t-category label-caps-muted">{t.category}</p>
+<p class="contact-process-label label-caps">How it usually starts</p>
+```
+
+Reduce the page-local rule to override-only declarations — just `color`, `margin-bottom`, `min-width`, or whatever genuinely differs. Strip all declarations that are now covered by the base class.
+
+Align any related global rules (e.g. `.section-label`, `.award-item .award-year`) to use the same canonical values — weight 700, tracking 0.1em, size 0.6875rem — to keep `section-label` consistent with the utility classes.
+
+**Pitfall:** drift hides in `letter-spacing` and `font-weight`. `0.08em` vs `0.1em` and `600` vs `700` are invisible at a glance but inconsistent in output. Always check these two properties when auditing label-like classes.
+
+**Pitfall:** search for CSS class definitions that are never used in markup before and after the refactor. A class like `.signal-label` may be defined in a `<style>` block but not present on any element — delete it rather than consolidating it.
+
+```bash
+# Detect dead CSS classes in page-local style blocks
+grep -n "class=" src/pages/testimonials.astro | grep -oP 'class="[^"]+"' | \
+  grep -oP '"[^"]+"' | tr ' ' '\n' | sort -u
+# Then cross-check each class name against the style block definitions
 ```
 
 ## Dead CSS detection
