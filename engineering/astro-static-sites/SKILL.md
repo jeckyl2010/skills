@@ -703,6 +703,18 @@ npm install -D eslint@latest
 
 ESLint 9 → 10 is a smooth upgrade for flat config projects — no config changes needed.
 
+### Pitfall: eslint-plugin-jsx-a11y peer dep conflict with ESLint 10
+
+`eslint-plugin-jsx-a11y` declares peer support for ESLint `^3 || ... || ^9` only — it lags behind the actual ESLint major. `npm ci` will fail with `ERESOLVE could not resolve` when ESLint 10 is installed. The plugin works fine at runtime; the peer dep declaration is just stale.
+
+Fix: add `.npmrc` at the repo root:
+
+```
+legacy-peer-deps=true
+```
+
+This tells npm to resolve peer deps the same way npm 6 did, which accepts the plugin. Commit `.npmrc` — CI needs it too, and forgetting it is exactly what surfaces the error there first.
+
 ## CSS quality audit (Project Wallace)
 
 After any significant CSS consolidation pass, run:
