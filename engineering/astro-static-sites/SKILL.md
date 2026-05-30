@@ -1,7 +1,7 @@
 ---
 name: astro-static-sites
 description: Build, review, and extend Astro static sites — config, integrations, SEO, deployment to GitHub Pages.
-version: "1.19.0"
+version: "1.20.0"
 tags: [astro, static-site, github-pages, seo, deployment, css]
 tool_agnostic: true
 authors: [Anders Hybertz]
@@ -1023,6 +1023,15 @@ for k, a in data['audits'].items():
 ### comtechconsulting.dk baseline (30.05.2026)
 
 Performance 99 · Accessibility 100 · Best Practices 100 · SEO 100
+
+## Accessibility checklist (static Astro sites)
+
+Before shipping any page:
+- Skip link: `<a class="skip-link" href="#main-content">Skip to content</a>` before `<header>`, with `<main id="main-content">`. Required WCAG 2.4.1.
+- `<html lang="en">` explicit — not browser-guessed.
+- `<nav>` is the semantic landmark. `role="navigation"` is redundant — remove it; keep `aria-label`.
+- `og:locale` must be a valid OGP locale (`en_GB`, `da_DK`). `en_DK` is not registered.
+- Font preloads must cover every weight used above the fold. Audit via DevTools Network tab filtered to font requests.
 
 - FCP 1.5s · LCP 1.7s · TBT 0ms · CLS 0 · TTI 1.7s
 - One diagnostic flag: render-blocking requests (score null — below penalty threshold)
