@@ -1,4 +1,4 @@
-generated: '2026-07-02'
+generated: '2026-07-29'
 skills:
 - name: comtech-ui-design
   category: design
@@ -357,6 +357,19 @@ skills:
   - proposals
   - manufacturing
   - documentation
+  tool_agnostic: true
+- name: technical-documentation-writing
+  category: engineering
+  path: engineering/technical-documentation-writing
+  description: Write unambiguous technical documentation — short sentences, active
+    voice, explicit nouns, literal verbs, no pronoun ambiguity.
+  version: 1.0.0
+  tags:
+  - documentation
+  - writing
+  - technical-writing
+  - clarity
+  - style-guide
   tool_agnostic: true
 - name: ai-humanizer
   category: tooling
