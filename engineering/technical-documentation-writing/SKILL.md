@@ -6,7 +6,7 @@ tags: [documentation, writing, technical-writing, clarity, style-guide]
 tool_agnostic: true
 authors: [Anders Hybertz]
 ---
-
+ 
 # Technical Documentation Writing
 
 Write clear, precise instructions. Eliminate all linguistic ambiguity.
